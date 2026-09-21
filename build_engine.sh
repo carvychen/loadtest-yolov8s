@@ -11,8 +11,16 @@ if [ ! -f "$ONNX" ]; then
 fi
 mkdir -p "$(dirname "$OUT")"
 
+# trtexec 在 Triton/NGC 镜像里通常不在 PATH, 实际位于 /usr/src/tensorrt/bin
+TRTEXEC="$(command -v trtexec || true)"
+for cand in /usr/src/tensorrt/bin/trtexec /opt/tensorrt/bin/trtexec; do
+  [ -z "$TRTEXEC" ] && [ -x "$cand" ] && TRTEXEC="$cand"
+done
+: "${TRTEXEC:?找不到 trtexec, 请确认在 Triton server 镜像内运行}"
+echo "使用 trtexec: $TRTEXEC"
+
 # 动态 batch: min=1 / opt=8 / max=32, 与 config.pbtxt 的 max_batch_size 一致
-trtexec \
+"$TRTEXEC" \
   --onnx="$ONNX" \
   --saveEngine="$OUT" \
   --fp16 \
