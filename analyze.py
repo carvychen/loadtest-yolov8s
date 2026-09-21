@@ -10,11 +10,12 @@ import os
 
 import pandas as pd
 
-# 每小时价格 USD/hr = Azure 门户月价 / 730。填你各 SKU 的实际月价。
+# 每小时价格 USD/hr —— Azure 公开零售价 (Consumption / 按需 / Linux / 非 Spot)。
+# 来源: Azure Retail Prices API, 查询于 2026-09; 若有 EA/预留折扣价请自行替换。
 PRICES_PER_HOUR = {
-    "rtx6000-quarter": 762.21 / 730,   # NC36lds_xl_RTXPRO6000BSE_v6; 省钱可换 NC24lds=692.92/730
-    "t4":  None,                        # TODO: Standard_NC16as_T4_v3  月价/730
-    "a10": None,                        # TODO: Standard_NV36ads_A10_v5 月价/730
+    "rtx6000-quarter": 1.243,   # Standard_NC36lds_xl_RTXPRO6000BSE_v6  West US 2      (Spot=0.2297)
+    "t4":              1.276,   # Standard_NC16as_T4_v3                 Sweden Central (Spot=0.3619)
+    "a10":             4.160,   # Standard_NV36ads_A10_v5 (整块A10大VM)  Sweden Central (Spot=0.7688)
 }
 
 
