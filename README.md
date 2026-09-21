@@ -18,11 +18,11 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 价格为 Azure 公开零售价（Consumption / 按需 / Linux / 非 Spot，查询于 2026-09）；QPS/$ 用 $/hr 计算。
 
-| 标签 | VM | SKU | 区域 | 按需 $/hr | Spot $/hr |
+| 标签 | SKU | vCPU / 内存 | 区域 | 按需 $/hr | Spot $/hr |
 |---|---|---|---|---|---|
-| `rtx6000-quarter` | rtx6000-quarter | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | West US 2 | **1.243** | 0.2297 |
-| `t4` | t4 | `Standard_NC16as_T4_v3` | Sweden Central | **1.276** | 0.3619 |
-| `a10` | CN-SkillRouter-A10 | `Standard_NV36ads_A10_v5` | Sweden Central | **4.160** | 0.7688 |
+| `rtx6000-quarter` | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | 36 vCPU / 72 GiB | West US 2 | **1.243** | 0.2297 |
+| `t4` | `Standard_NC16as_T4_v3` | 16 vCPU / 110 GiB | Sweden Central | **1.276** | 0.3619 |
+| `a10` | `Standard_NV36ads_A10_v5` | 36 vCPU / 440 GiB | Sweden Central | **4.160** | 0.7688 |
 
 > Azure 把 1/4 切片当成 `GPU × 1` 暴露，无需手动配 MIG，三台机器脚本完全相同。
 > RTX 1/4 切片与整块 T4 单价几乎相同（$1.24 vs $1.28/hr），是 QPS/$ 最可能拉开差距处。
