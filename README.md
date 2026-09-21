@@ -18,11 +18,13 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 价格为 Azure 公开零售价（Consumption / 按需 / Linux / 非 Spot，查询于 2026-09）；QPS/$ 用 $/hr 计算。
 
-| 标签 | SKU | vCPU / 内存 | 区域 | 按需 $/hr | Spot $/hr |
-|---|---|---|---|---|---|
-| `rtx6000-quarter` | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | 36 vCPU / 72 GiB | West US 2 | **1.243** | 0.2297 |
-| `t4` | `Standard_NC16as_T4_v3` | 16 vCPU / 110 GiB | Sweden Central | **1.276** | 0.3619 |
-| `a10` | `Standard_NV36ads_A10_v5` | 36 vCPU / 440 GiB | Sweden Central | **4.160** | 0.7688 |
+| 标签 | SKU | GPU · 显存 | vCPU / 内存 | 区域 | 按需 $/hr | Spot $/hr |
+|---|---|---|---|---|---|---|
+| `rtx6000-quarter` | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | RTX PRO 6000 Blackwell 1/4 · **24 GB** GDDR7 | 36 vCPU / 72 GiB | West US 2 | **1.243** | 0.2297 |
+| `t4` | `Standard_NC16as_T4_v3` | T4 · **16 GB** GDDR6 | 16 vCPU / 110 GiB | Sweden Central | **1.276** | 0.3619 |
+| `a10` | `Standard_NV36ads_A10_v5` | A10 · **24 GB** GDDR6 | 36 vCPU / 440 GiB | Sweden Central | **4.160** | 0.7688 |
+
+> 显存：RTX 1/4 切片与 A10 均 24 GB，T4 仅 16 GB。YOLOv8s 引擎 + batch≤32 激活远小于 16 GB，**三卡显存对本基准都不构成瓶颈**；此列供参考（换更大模型或更大 batch 时才受限）。
 
 > Azure 把 1/4 切片当成 `GPU × 1` 暴露，无需手动配 MIG，三台机器脚本完全相同。
 > RTX 1/4 切片与整块 T4 单价几乎相同（$1.24 vs $1.28/hr），是 QPS/$ 最可能拉开差距处。
