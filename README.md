@@ -16,14 +16,18 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 ## 目标设备
 
-| 标签 | VM | SKU | 区域 | 月价 (USD) |
-|---|---|---|---|---|
-| `rtx6000-quarter` | rtx6000-quarter | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | West US 2 | 762.21 |
-| `t4` | t4 | `Standard_NC16as_T4_v3` | Sweden Central | 待填 |
-| `a10` | CN-SkillRouter-A10 | `Standard_NV36ads_A10_v5` | Sweden Central | 待填 |
+价格为 Azure 公开零售价（Consumption / 按需 / Linux / 非 Spot，查询于 2026-09）；QPS/$ 用 $/hr 计算。
+
+| 标签 | VM | SKU | 区域 | 按需 $/hr | Spot $/hr |
+|---|---|---|---|---|---|
+| `rtx6000-quarter` | rtx6000-quarter | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | West US 2 | **1.243** | 0.2297 |
+| `t4` | t4 | `Standard_NC16as_T4_v3` | Sweden Central | **1.276** | 0.3619 |
+| `a10` | CN-SkillRouter-A10 | `Standard_NV36ads_A10_v5` | Sweden Central | **4.160** | 0.7688 |
 
 > Azure 把 1/4 切片当成 `GPU × 1` 暴露，无需手动配 MIG，三台机器脚本完全相同。
-> 省钱：`NC24lds`（$692.92）通常够用（推理 GPU-bound），比 `NC36lds` 每月省 ~$70。
+> RTX 1/4 切片与整块 T4 单价几乎相同（$1.24 vs $1.28/hr），是 QPS/$ 最可能拉开差距处。
+> `NV36ads_A10_v5` 是整块 A10 的大 VM（36 vCPU/440GB），$4.16/hr 偏贵；如需公平可用小切片档 `NV6/12/18ads_A10_v5`。
+> 有 EA/预留折扣价时，改 `analyze.py` 顶部的 `PRICES_PER_HOUR` 即可。
 
 ## 压测数据
 
