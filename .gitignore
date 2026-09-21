@@ -1,0 +1,17 @@
+# 由 setup.sh 自动生成/下载, 不入库
+yolov8s.pt
+*.onnx
+*.plan
+model_repository/yolov8s/1/*.plan
+build_*.log
+datasets/
+coco128*/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# 结果 CSV 保留 (是实验数据); 忽略生成的图
+results/curve.png

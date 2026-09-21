@@ -1,0 +1,32 @@
+name: "yolov8s"
+platform: "tensorrt_plan"
+max_batch_size: 32
+
+input [
+  {
+    name: "images"
+    data_type: TYPE_FP32
+    dims: [ 3, 640, 640 ]
+  }
+]
+output [
+  {
+    name: "output0"
+    data_type: TYPE_FP32
+    dims: [ 84, 8400 ]
+  }
+]
+
+# 在线延迟场景的关键: 动态批处理把并发请求攒成 batch, 提高吞吐。
+# max_queue_delay 越大吞吐越高但尾延迟越高 —— 三卡用同一值保证公平。
+dynamic_batching {
+  preferred_batch_size: [ 4, 8 ]
+  max_queue_delay_microseconds: 100
+}
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_GPU
+  }
+]
