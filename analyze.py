@@ -25,6 +25,9 @@ ALT_HOST_SKUS = {
     "rtx6000-quarter-nc24": [
         ("rtx6000-quarter-nc36", 1.243),  # Standard_NC36lds_xl_RTXPRO6000BSE_v6  36 vCPU/72GB  West US 2
     ],
+    # 注: NC4as/NC8as_T4_v3 (更便宜的单卡 T4 主机) 未纳入对比 —— 那是向更少 vCPU 折算的
+    # 未实测推算 (客户端能否喂满存疑), 本报告只用实测/保守口径。RTX NC36 是向更多 vCPU
+    # 折算, 对 GPU-bound 吞吐安全, 故保留。
 }
 
 
@@ -88,15 +91,33 @@ def main():
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
+        # 图例用 Azure SKU 名 (与报告口径一致); 未命中的标签退回原名
+        sku_names = {
+            "a10": "Standard_NV36ads_A10_v5",
+            "t4": "Standard_NC16as_T4_v3",
+            "rtx6000-quarter-nc24": "Standard_NC24lds_xl_RTXPRO6000BSE_v6",
+            "rtx6000-quarter-nc36": "Standard_NC36lds_xl_RTXPRO6000BSE_v6",
+        }
         plt.figure(figsize=(7, 5))
         for label, df in curves.items():
-            plt.plot(df["qps"], df["p99_ms"], marker="o", label=label)
+            d = df.sort_values("Concurrency")
+            plt.plot(d["qps"], d["p99_ms"], marker="o", label=sku_names.get(label, label))
+            # 标注每条曲线的并发起点/终点, 说明每个点是一档并发
+            c0, c1 = d.iloc[0], d.iloc[-1]
+            plt.annotate(f"c={int(c0['Concurrency'])}", (c0["qps"], c0["p99_ms"]),
+                         fontsize=7, xytext=(3, -8), textcoords="offset points")
+            plt.annotate(f"c={int(c1['Concurrency'])}", (c1["qps"], c1["p99_ms"]),
+                         fontsize=7, xytext=(3, 4), textcoords="offset points")
         plt.axhline(args.sla_ms, ls="--", c="gray", label=f"SLA {args.sla_ms}ms")
         plt.xlabel("Throughput (QPS)")
         plt.ylabel("p99 latency (ms)")
         plt.title("YOLOv8s: throughput vs p99 latency")
         plt.legend()
         plt.grid(alpha=0.3)
+        # 并发扫描说明挪到图下方备注, 让标题精简
+        plt.figtext(0.5, -0.03,
+                    "Note: each curve is a concurrency sweep 1->32; each marker = one concurrency level.",
+                    ha="center", fontsize=8, color="gray")
         plt.savefig(args.plot, dpi=130, bbox_inches="tight")
         print(f"曲线已保存: {args.plot}")
     except ImportError:
