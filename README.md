@@ -20,7 +20,7 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 | 标签 | SKU | GPU · 显存 | vCPU / 内存 | 区域 | 按需 $/hr | Spot $/hr |
 |---|---|---|---|---|---|---|
-| `rtx6000-quarter-nc24` | `Standard_NC24lds_xl_RTXPRO6000BSE_v6` | RTX PRO 6000 Blackwell 1/4 · **24 GB** GDDR7 | 24 vCPU / 70 GiB | West US 2 | **1.13** | ~0.21 |
+| `rtx6000-quarter-nc24` | `Standard_NC24lds_xl_RTXPRO6000BSE_v6` | RTX PRO 6000 Blackwell 1/4 · **24 GB** GDDR7 | 24 vCPU / 72 GiB | West US 2 | **1.13** | ~0.21 |
 | `rtx6000-quarter-nc36` | `Standard_NC36lds_xl_RTXPRO6000BSE_v6` | RTX PRO 6000 Blackwell 1/4 · **24 GB** GDDR7 | 36 vCPU / 72 GiB | West US 2 | **1.243** | 0.2297 |
 | `t4` | `Standard_NC16as_T4_v3` | T4 · **16 GB** GDDR6 | 16 vCPU / 110 GiB | Sweden Central | **1.276** | 0.3619 |
 | `a10` | `Standard_NV36ads_A10_v5` | A10 · **24 GB** GDDR6 | 36 vCPU / 440 GiB | Sweden Central | **4.160** | 0.7688 |
@@ -54,22 +54,22 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 perf_analyzer 会把**一档并发内每个「请求+响应」都留在客户端内存不释放**。YOLOv8s 单请求 ≈ **7.7 MB** = 输入 `images[3,640,640]` FP32（4.9 MB）+ 输出 `output0[84,8400]` FP32（2.8 MB）。故单档峰值内存 =（`WARMUP` + `REQUESTS`）× 7.7 MB，**与并发范围无关**（每档是独立进程，跨档释放）。
 
-内存小且 `Swap=0` 的机器（RTX 两台都是 ~70 GiB / Swap 0）必须据此压低 `REQUESTS`，否则 OOM killer 会直接杀掉进程（还会短暂冻住整台机器）。**样本量只影响 p99 估计的精度，不改变 p99 真值**——所以各机器用不同 `REQUESTS` 不影响横向公平；真正要对齐的是**并发范围**与**预热**。
+内存小且 `Swap=0` 的机器（RTX 两台都是 ~72 GiB / Swap 0）必须据此压低 `REQUESTS`，否则 OOM killer 会直接杀掉进程（还会短暂冻住整台机器）。**样本量只影响 p99 估计的精度，不改变 p99 真值**——所以各机器用不同 `REQUESTS` 不影响横向公平；真正要对齐的是**并发范围**与**预热**。
 
 | 机器 | 内存 | 建议 | 单档峰值 |
 |---|---|---|---|
-| `rtx6000-quarter-nc24` / `-nc36` | ~70 GiB · Swap 0 | `REQUESTS=5000 WARMUP=1000` | ~46 GB（留 ~22 GB 余量） |
+| `rtx6000-quarter-nc24` / `-nc36` | ~72 GiB · Swap 0 | `REQUESTS=5000 WARMUP=1000` | ~46 GB（留 ~26 GB 余量） |
 | `t4` | 110 GiB | `REQUESTS=8000 WARMUP=1000` | ~65 GB |
 | `a10` | 440 GiB | `REQUESTS=8000 WARMUP=1000` | ~65 GB |
 
 ```bash
-# RTX（NC24/NC36，70GiB·Swap0 → 压到 5000）
+# RTX（NC24/NC36，72GiB·Swap0 → 压到 5000）
 CONCURRENCY=1:32:1 REQUESTS=5000 WARMUP=1000 bash run.sh rtx6000-quarter-nc24
 # T4 / A10（内存宽裕，可用 8000）
 CONCURRENCY=1:32:1 REQUESTS=8000 WARMUP=1000 bash run.sh t4
 ```
 
-> 8000 × 7.7 MB ≈ 69 GB 会撑爆 RTX 那台（70 GiB / Swap 0），这正是之前 OOM 的原因；5000 留足余量，且 p99 尾部仍有 ~50 个样本，够稳。
+> 8000 × 7.7 MB ≈ 69 GB 逼近 RTX 那台的物理上限（72 GiB / Swap 0，扣掉系统/驱动后可用更少），这正是之前 OOM 的原因；5000 留足余量，且 p99 尾部仍有 ~50 个样本，够稳。
 
 ## 跑完清理（省钱）
 

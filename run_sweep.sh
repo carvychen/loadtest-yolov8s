@@ -11,7 +11,7 @@
 # 内存安全: perf_analyzer 会把一档内每个"请求+响应"都留在客户端内存不释放。YOLOv8s
 #   单请求 ≈ 7.7MB = 输入 images[3,640,640] FP32 (4.9MB) + 输出 output0[84,8400]
 #   FP32 (2.8MB)。固定请求数 → 单档内存写死 = (WARMUP+REQUESTS) × 7.7MB, 与并发范围
-#   无关 (每档单独进程, 跨档释放)。默认 9000×7.7MB ≈ 69GB → 在 NC24 (70GiB, Swap=0)
+#   无关 (每档单独进程, 跨档释放)。默认 9000×7.7MB ≈ 69GB → 在 NC24 (72GiB, Swap=0)
 #   会 OOM! 内存小的机器请降 REQUESTS (如 2500 → 约 23GB, 稳)。这也避免了旧稳定化模式
 #   在饱和档不收敛 → 无限跑窗口 → OOM kill。
 set -uo pipefail
