@@ -13,9 +13,18 @@ import pandas as pd
 # 每小时价格 USD/hr —— Azure 公开零售价 (Consumption / 按需 / Linux / 非 Spot)。
 # 来源: Azure Retail Prices API, 查询于 2026-09; 若有 EA/预留折扣价请自行替换。
 PRICES_PER_HOUR = {
-    "rtx6000-quarter": 1.243,   # Standard_NC36lds_xl_RTXPRO6000BSE_v6  West US 2      (Spot=0.2297)
-    "t4":              1.276,   # Standard_NC16as_T4_v3                 Sweden Central (Spot=0.3619)
-    "a10":             4.160,   # Standard_NV36ads_A10_v5 (整块A10大VM)  Sweden Central (Spot=0.7688)
+    "rtx6000-quarter-nc24": 1.13,   # Standard_NC24lds_xl_RTXPRO6000BSE_v6  24 vCPU/70GB  West US 2 (Spot≈0.21) — 实测主机
+    "t4":                   1.276,  # Standard_NC16as_T4_v3                 Sweden Central (Spot=0.3619)
+    "a10":                  4.160,  # Standard_NV36ads_A10_v5 (整块A10大VM)  Sweden Central (Spot=0.7688)
+}
+
+# 同一块 RTX PRO 6000 1/4 切片也能搭别的主机 SKU: GPU 吞吐相同, 仅主机 vCPU/内存/单价不同。
+# 实测跑在 NC24; 下面用同一份 rtx6000-quarter-nc24.csv 的吞吐, 换价格再折算一行 QPS/$
+# (NC36 的 vCPU 更多, 不会降低 GPU-bound 吞吐, 用 NC24 吞吐估它的 QPS/$ 偏保守)。
+ALT_HOST_SKUS = {
+    "rtx6000-quarter-nc24": [
+        ("rtx6000-quarter-nc36", 1.243),  # Standard_NC36lds_xl_RTXPRO6000BSE_v6  36 vCPU/72GB  West US 2
+    ],
 }
 
 
@@ -26,9 +35,8 @@ def load(path):
     return df.sort_values("Concurrency")
 
 
-def summarize(label, df, sla_ms):
+def summarize(label, df, sla_ms, price):
     ok = df[df["p99_ms"] <= sla_ms]
-    price = PRICES_PER_HOUR.get(label)
     if ok.empty:
         return {"label": label, "qps_at_sla": 0.0,
                 "note": f"无并发点满足 p99<={sla_ms}ms (最低 p99={df['p99_ms'].min():.1f}ms)"}
@@ -60,7 +68,10 @@ def main():
         label = os.path.splitext(os.path.basename(path))[0]
         df = load(path)
         curves[label] = df
-        rows.append(summarize(label, df, args.sla_ms))
+        rows.append(summarize(label, df, args.sla_ms, PRICES_PER_HOUR.get(label)))
+        # 同一 GPU 切片的其它主机 SKU: 复用同一份吞吐, 换价格再算一行 QPS/$
+        for alt_label, alt_price in ALT_HOST_SKUS.get(label, []):
+            rows.append(summarize(alt_label, df, args.sla_ms, alt_price))
 
     out = pd.DataFrame(rows)
     print(f"\n=== YOLOv8s 三卡对比 (p99 SLA ≤ {args.sla_ms} ms) ===")
