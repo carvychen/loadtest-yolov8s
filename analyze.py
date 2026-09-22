@@ -50,6 +50,9 @@ def summarize(label, df, sla_ms, price):
         "p99_ms": round(best["p99_ms"], 1),
         "concurrency": int(best["Concurrency"]),
         "usd_per_hr": round(price, 3) if price else None,
+        # 面向客户的成本指标: 每百万次推理机时费 (USD), 越低越省。
+        # = 单价 / (QPS * 3600秒) * 1e6, 与 qps_per_usd_hr 互为倒数, 排名一致。
+        "usd_per_1m_inf": round(price / best["qps"] / 3600 * 1e6, 2) if price else None,
         "qps_per_usd_hr": round(best["qps"] / price, 1) if price else None,
     }
     return row
@@ -80,9 +83,10 @@ def main():
     print(f"\n=== YOLOv8s 三卡对比 (p99 SLA ≤ {args.sla_ms} ms) ===")
     print(out.to_string(index=False))
 
-    if "qps_per_usd_hr" in out.columns and out["qps_per_usd_hr"].notna().any():
-        best = out.loc[out["qps_per_usd_hr"].idxmax()]
-        print(f"\n每美元性能最优: {best['label']}  →  {best['qps_per_usd_hr']} QPS per $/hr")
+    if "usd_per_1m_inf" in out.columns and out["usd_per_1m_inf"].notna().any():
+        best = out.loc[out["usd_per_1m_inf"].idxmin()]
+        print(f"\n单位推理成本最低: {best['label']}  →  ${best['usd_per_1m_inf']} / 百万次推理"
+              f"  ({best['qps_per_usd_hr']} QPS per $/hr)")
         print("提示: 完整 RTX PRO 6000 ≈ 4× quarter, 比较整卡方案时 quarter 的吞吐 ×4、价格 ×4。")
     else:
         print("\n(在 analyze.py 顶部填 t4 / a10 的价格后可得每美元性能排名)")
