@@ -52,24 +52,26 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 
 ## 内存安全 · 每档请求数（REQUESTS）
 
-perf_analyzer 会把**一档并发内每个「请求+响应」都留在客户端内存不释放**。YOLOv8s 单请求 ≈ **7.7 MB** = 输入 `images[3,640,640]` FP32（4.9 MB）+ 输出 `output0[84,8400]` FP32（2.8 MB）。故单档峰值内存 =（`WARMUP` + `REQUESTS`）× 7.7 MB，**与并发范围无关**（每档是独立进程，跨档释放）。
+perf_analyzer 会把**一档并发内每个「请求+响应」都留在客户端内存不释放**。YOLOv8s 单请求张量 ≈ 7.4 MB（输入 `images[3,640,640]` FP32 4.7 MB + 输出 `output0[84,8400]` FP32 2.7 MB），但 gRPC 会同时保留**序列化 + 反序列化两份副本**加 protobuf 开销，**实测单请求实际吃 ~12 MB**（NC24 上 6000 个请求 = 5000+1000 预热就吃满了 70 Gi）。故单档峰值 ≈（`WARMUP` + `REQUESTS`）× 12 MB，**与并发范围无关**（每档是独立进程，跨档释放）。
 
-内存小且 `Swap=0` 的机器（RTX 两台都是 ~72 GiB / Swap 0）必须据此压低 `REQUESTS`，否则 OOM killer 会直接杀掉进程（还会短暂冻住整台机器）。**样本量只影响 p99 估计的精度，不改变 p99 真值**——所以各机器用不同 `REQUESTS` 不影响横向公平；真正要对齐的是**并发范围**与**预热**。
+内存小且 `Swap=0` 的机器（RTX 两台标称 72 GiB，`free -h` 实测 total 仅 **~70 Gi 可用**，扣固件/内核预留）必须据此压低 `REQUESTS`，否则 OOM killer 会直接杀掉进程（还会短暂冻住整台机器）。**样本量只影响 p99 估计的精度，不改变 p99 真值**——所以各机器用不同 `REQUESTS` 不影响横向公平；真正要对齐的是**并发范围**与**充分预热**（预热只要够到稳态即可，500/1000 都行，不必逐台相等）。
 
-| 机器 | 内存 | 建议 | 单档峰值 |
+| 机器 | 可用内存 | 建议 | 单档峰值 |
 |---|---|---|---|
-| `rtx6000-quarter-nc24` / `-nc36` | ~72 GiB · Swap 0 | `REQUESTS=5000 WARMUP=1000` | ~46 GB（留 ~26 GB 余量） |
-| `t4` | 110 GiB | `REQUESTS=8000 WARMUP=1000` | ~65 GB |
-| `a10` | 440 GiB | `REQUESTS=8000 WARMUP=1000` | ~65 GB |
+| `rtx6000-quarter-nc24` / `-nc36` | ~70 Gi · Swap 0 | `REQUESTS=2500 WARMUP=1000` | ~42 GB（留 ~28 Gi 余量） |
+| `t4` | ~108 Gi | `REQUESTS=5000 WARMUP=1000` | ~72 GB（留 ~36 Gi 余量） |
+| `a10` | ~438 Gi | `REQUESTS=8000 WARMUP=1000` | ~108 GB（内存宽裕，已实测通过） |
 
 ```bash
-# RTX（NC24/NC36，72GiB·Swap0 → 压到 5000）
-CONCURRENCY=1:32:1 REQUESTS=5000 WARMUP=1000 bash run.sh rtx6000-quarter-nc24
-# T4 / A10（内存宽裕，可用 8000）
-CONCURRENCY=1:32:1 REQUESTS=8000 WARMUP=1000 bash run.sh t4
+# RTX（NC24/NC36，~70Gi·Swap0 → 压到 2500）
+CONCURRENCY=1:32:1 REQUESTS=2500 WARMUP=1000 bash run.sh rtx6000-quarter-nc24
+# T4（~108Gi → 5000）
+CONCURRENCY=1:32:1 REQUESTS=5000 WARMUP=1000 bash run.sh t4
+# A10（440GiB 宽裕，8000 已实测通过）
+CONCURRENCY=1:32:1 REQUESTS=8000 WARMUP=1000 bash run.sh a10
 ```
 
-> 8000 × 7.7 MB ≈ 69 GB 逼近 RTX 那台的物理上限（72 GiB / Swap 0，扣掉系统/驱动后可用更少），这正是之前 OOM 的原因；5000 留足余量，且 p99 尾部仍有 ~50 个样本，够稳。
+> 之前按 7.4 MB/请求估算是错的：gRPC 双副本让**实际约 12 MB/请求**。5000 请求（+1000 预热）× 12 MB ≈ 70 GB 正好吃满 NC24（`free -h` 显示 available 只剩 50 Mi），这就是撞墙点；降到 2500 峰值 ~42 GB，留足余量，p99 尾部仍有 ~25 个样本，够用。跑之前 `watch -n0.1 free -h` 盯着最稳。
 
 ## 跑完清理（省钱）
 
