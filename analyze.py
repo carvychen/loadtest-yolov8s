@@ -102,7 +102,7 @@ def main():
             "rtx6000-quarter-nc24": "Standard_NC24lds_xl_RTXPRO6000BSE_v6",
             "rtx6000-quarter-nc36": "Standard_NC36lds_xl_RTXPRO6000BSE_v6",
         }
-        plt.figure(figsize=(7, 5))
+        plt.figure(figsize=(9, 6.5))
         for label, df in curves.items():
             d = df.sort_values("Concurrency")
             plt.plot(d["qps"], d["p99_ms"], marker="o", label=sku_names.get(label, label))
@@ -116,7 +116,8 @@ def main():
         plt.xlabel("Throughput (QPS)")
         plt.ylabel("p99 latency (ms)")
         plt.title("YOLOv8s: throughput vs p99 latency")
-        plt.legend()
+        # 图例放左上空白区, 避开 T4 在 ~225 QPS 处的竖直爬升
+        plt.legend(loc="upper left", framealpha=0.9)
         plt.grid(alpha=0.3)
         # 并发扫描说明挪到图下方备注, 让标题精简
         plt.figtext(0.5, -0.03,
