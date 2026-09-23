@@ -16,6 +16,7 @@ import pandas as pd
 PRICES_PER_HOUR = {
     "rtx6000-quarter-nc24": 1.130,  # Standard_NC24lds_xl_RTXPRO6000BSE_v6  24 vCPU/72GB  West US 2 — 实测主机
     "t4":                   1.204,  # Standard_NC16as_T4_v3                 West US 2
+    "t4-nc4as":             0.526,  # Standard_NC4as_T4_v3  4 vCPU/28GB      West US 2 — 客户选型 (实测)
     "a10":                  3.200,  # Standard_NV36ads_A10_v5 (整块A10大VM)  West US 2
 }
 
