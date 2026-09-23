@@ -27,9 +27,9 @@ ALT_HOST_SKUS = {
     "rtx6000-quarter-nc24": [
         ("rtx6000-quarter-nc36", 1.243),  # Standard_NC36lds_xl_RTXPRO6000BSE_v6  36 vCPU/72GB  West US 2
     ],
-    # 注: NC4as/NC8as_T4_v3 (更便宜的单卡 T4 主机) 未纳入对比 —— 那是向更少 vCPU 折算的
-    # 未实测推算 (客户端能否喂满存疑), 本报告只用实测/保守口径。RTX NC36 是向更多 vCPU
-    # 折算, 对 GPU-bound 吞吐安全, 故保留。
+    # 注: NC4as_T4_v3 (更便宜的 4-vCPU 单卡 T4 主机, 客户实际选型) 已实测入库 (label=t4-nc4as),
+    # 不再是推算。实测证实 4 vCPU 会限制吞吐 (~159 QPS, 不及 NC16as 的 227), 但单价仅 $0.526
+    # 使其单位推理成本最低。NC8as_T4_v3 未测。RTX NC36 仍是向更多 vCPU 的保守折算。
 }
 
 
@@ -101,6 +101,7 @@ def main():
         sku_names = {
             "a10": "Standard_NV36ads_A10_v5",
             "t4": "Standard_NC16as_T4_v3",
+            "t4-nc4as": "Standard_NC4as_T4_v3 (customer)",
             "rtx6000-quarter-nc24": "Standard_NC24lds_xl_RTXPRO6000BSE_v6",
             "rtx6000-quarter-nc36": "Standard_NC36lds_xl_RTXPRO6000BSE_v6",
         }
