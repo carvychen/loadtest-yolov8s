@@ -27,7 +27,11 @@ for i in $(seq 1 60); do
 done
 
 echo "[3/4] perf_analyzer 并发扫描 (1→32)..."
-docker run --rm --net host -v "$PWD":/work -w /work "$SDK" bash run_sweep.sh "$LABEL"
+# 透传扫描参数进容器 (-e 不带值即取宿主机同名变量): 小内存机型 (如 NC4as_T4_v3 28GiB)
+# 必须能从外部压低 REQUESTS/WARMUP, 否则容器内用默认 2500/1000 会 OOM。
+docker run --rm --net host -v "$PWD":/work -w /work \
+  -e CONCURRENCY -e REQUESTS -e WARMUP \
+  "$SDK" bash run_sweep.sh "$LABEL"
 
 echo "[4/4] 停止 Triton"
 cleanup
