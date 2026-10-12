@@ -1,0 +1,6032 @@
+{"Layers": [{
+  "Name": "__mye9941_0_myl0_0",
+  "LayerType": "shape_call",
+  "Inputs": [],
+  "Constants": [],
+  "Outputs": [],
+  "TacticName": "",
+  "StreamId": 0,
+  "Metadata": ""
+},{
+  "Name": "__myl_Cast_myl0_1",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "images",
+    "Dimensions": [-1,3,640,640],
+    "Strides": [1228800,409600,640,1],
+    "StrideOrder": [3,2,1,0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.0/conv/Conv_output_0.1_34_myl0",
+    "Dimensions": [-1,3,640,640],
+    "Strides": [1228800,1,1920,3],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Cast_0xda4915e52a88b0c9aa60b761362c14cd",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: images_cast_to_fp16]"
+},{
+  "Name": "/model.0/conv/Conv_myl0_2",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.0/conv/Conv_output_0.1_34_myl0",
+    "Dimensions": [-1,3,640,640],
+    "Strides": [1228800,1,1920,3],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31471dconst_myl0",
+    "Dimensions": [32,3,3,3],
+    "Strides": [27,1,9,3],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye31476dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_35_myl0",
+    "Dimensions": [-1,32,320,320],
+    "Strides": [3276800,1,10240,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x16_aligna2_alignc8",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.0/conv/Conv]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_3",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_35_myl0",
+    "Dimensions": [-1,32,320,320],
+    "Strides": [3276800,1,10240,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44779_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.1/conv/Conv_output_0.1_36_myl0",
+    "Dimensions": [-1,32,320,320],
+    "Strides": [3276800,1,10240,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x45019daf4052500836ed578461af4397_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.0/act/Sigmoid]\u001f[ONNX Layer: /model.0/act/Mul]\u001f[ONNX Layer: /model.0/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.1/conv/Conv_myl0_4",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.1/conv/Conv_output_0.1_36_myl0",
+    "Dimensions": [-1,32,320,320],
+    "Strides": [3276800,1,10240,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31481dconst_myl0",
+    "Dimensions": [64,32,3,3],
+    "Strides": [288,1,96,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31486dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31491dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31496dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_37_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.1/conv/Conv]\u001f[ONNX Layer: /model.0/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_5",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_37_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44783_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.2/cv1/conv/Conv_output_0.1_38_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xfbc3dc76281d606fc29da7cc34f4bcaa_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.1/act/Sigmoid]\u001f[ONNX Layer: /model.1/act/Mul]\u001f[ONNX Layer: /model.1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.2/cv1/conv/Conv_myl0_6",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.2/cv1/conv/Conv_output_0.1_38_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31501dconst_myl0",
+    "Dimensions": [64,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31506dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31511dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31516dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_39_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/cv1/conv/Conv]\u001f[ONNX Layer: /model.1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.2.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.2.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCastSlicSlic_myl0_7",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_39_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44787_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.2/m.0/cv1/conv/Conv_output_0.1_41_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_40_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCastSlicSlic_0x64088720ddb209c5610acbb5208af88f_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.2/cv1/act/Mul]\u001f[ONNX Layer: /model.2/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.2/Split]"
+},{
+  "Name": "/model.2/m.0/cv1/conv/Conv_myl0_8",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.2/m.0/cv1/conv/Conv_output_0.1_41_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31521dconst_myl0",
+    "Dimensions": [32,32,3,3],
+    "Strides": [288,1,96,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31526dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31531dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31536dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_42_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.2/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.2.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.2.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_9",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_42_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44791_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.2/m.0/cv2/conv/Conv_output_0.1_43_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xfa2c68f9a6829318864f92791ca3dfc0_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.2/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.2/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.2/m.0/cv2/conv/Conv_myl0_10",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.2/m.0/cv2/conv/Conv_output_0.1_43_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31541dconst_myl0",
+    "Dimensions": [32,32,3,3],
+    "Strides": [288,1,96,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31546dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31551dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31556dconst_myl0",
+    "Dimensions": [1,32,1,1],
+    "Strides": [32,1,32,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_44_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.2/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.2.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.2.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_myl0_11",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_40_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.2/m.0/cv1/conv/Conv_output_0.1_41_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.2/m.0/cv1/conv/Conv_output_0.1_41_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_44_myl0",
+    "Dimensions": [-1,32,160,160],
+    "Strides": [819200,1,5120,32],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44787_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44798_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44802_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44806_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.2/cv2/conv/Conv_output_0.1_45_myl0",
+    "Dimensions": [-1,96,160,160],
+    "Strides": [2457600,1,15360,96],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_0xad6e8475a2815724e3a2ffa73af9be6c_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.2/m.0/cv2/act/Mul]\u001f[ONNX Layer: /model.2/m.0/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.2/m.0/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.2/m.0/Add]\u001f[ONNX Layer: /model.2/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: /model.2/Concat]\u001f[ONNX Layer: /model.2/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.2/cv2/conv/Conv_myl0_12",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.2/cv2/conv/Conv_output_0.1_45_myl0",
+    "Dimensions": [-1,96,160,160],
+    "Strides": [2457600,1,15360,96],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31561dconst_myl0",
+    "Dimensions": [64,96,1,1],
+    "Strides": [96,1,96,96],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31566dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31571dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31576dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_46_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/cv2/conv/Conv]\u001f[ONNX Layer: /model.2/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.2.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.2.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_13",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_46_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44810_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.3/conv/Conv_output_0.1_47_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xfbc3dc76281d606fc29da7cc34f4bcaa_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.2/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.2/cv2/act/Mul]\u001f[ONNX Layer: /model.2/cv2/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.3/conv/Conv_myl0_14",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.3/conv/Conv_output_0.1_47_myl0",
+    "Dimensions": [-1,64,160,160],
+    "Strides": [1638400,1,10240,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31581dconst_myl0",
+    "Dimensions": [128,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31586dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31591dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31596dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_48_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.3/conv/Conv]\u001f[ONNX Layer: /model.2/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.3.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.3.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_15",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_48_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44814_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/cv1/conv/Conv_output_0.1_49_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xb5db17ff2ec172adb7d500ff39cdce1b_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.3/act/Sigmoid]\u001f[ONNX Layer: /model.3/act/Mul]\u001f[ONNX Layer: /model.3/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.4/cv1/conv/Conv_myl0_16",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/cv1/conv/Conv_output_0.1_49_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31601dconst_myl0",
+    "Dimensions": [128,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31606dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31611dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31616dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_50_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/cv1/conv/Conv]\u001f[ONNX Layer: /model.3/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.4.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCastSlicSlic_myl0_17",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_50_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44818_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/m.0/cv1/conv/Conv_output_0.1_52_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_51_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCastSlicSlic_0x51874409c4512d58794dd40550b31947_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.4/cv1/act/Mul]\u001f[ONNX Layer: /model.4/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.4/Split]"
+},{
+  "Name": "/model.4/m.0/cv1/conv/Conv_myl0_18",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/m.0/cv1/conv/Conv_output_0.1_52_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31621dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31626dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31631dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31636dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_53_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.4/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.4.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_19",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_53_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44822_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/m.0/cv2/conv/Conv_output_0.1_54_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xa02014f2265efc87e4e4f712838854c9_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.4/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.4/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.4/m.0/cv2/conv/Conv_myl0_20",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/m.0/cv2/conv/Conv_output_0.1_54_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31641dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31646dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31651dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31656dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_55_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.4/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.4.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCast_myl0_21",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "/model.4/m.0/cv1/conv/Conv_output_0.1_52_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_55_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44818_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44829_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44833_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44837_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/m.1/cv1/conv/Conv_output_0.1_56_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCast_0x453e7112cdd50b63d54f3a4ecdf487b4_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.4/m.0/cv2/act/Mul]\u001f[ONNX Layer: /model.4/m.0/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.4/m.0/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.4/m.0/Add]\u001f[ONNX Layer: /model.4/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: /model.4/m.0/Add_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.4/m.1/cv1/conv/Conv_myl0_22",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/m.1/cv1/conv/Conv_output_0.1_56_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31661dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31666dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31671dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31676dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_57_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.1/cv1/conv/Conv]\u001f[ONNX Layer: /model.4/m.0/Add_output_0_DequantizeLinear]\u001f[ONNX Layer: model.4.m.1.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.m.1.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_23",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_57_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44841_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/m.1/cv2/conv/Conv_output_0.1_58_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xa02014f2265efc87e4e4f712838854c9_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.1/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.4/m.1/cv1/act/Mul]\u001f[ONNX Layer: /model.4/m.1/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.4/m.1/cv2/conv/Conv_myl0_24",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/m.1/cv2/conv/Conv_output_0.1_58_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31681dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31686dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31691dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31696dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_59_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.1/cv2/conv/Conv]\u001f[ONNX Layer: /model.4/m.1/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.4.m.1.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.m.1.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_myl0_25",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_51_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.4/m.0/cv1/conv/Conv_output_0.1_52_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.4/m.1/cv1/conv/Conv_output_0.1_56_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.4/m.1/cv1/conv/Conv_output_0.1_56_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_59_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44818_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44829_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44851_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44855_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.4/cv2/conv/Conv_output_0.1_60_myl0",
+    "Dimensions": [-1,256,80,80],
+    "Strides": [1638400,1,20480,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_0xb617bf2cd81daaa5c7adfdb989b7ed3c_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/m.1/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.4/m.1/cv2/act/Mul]\u001f[ONNX Layer: /model.4/m.1/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.4/m.1/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.4/m.1/Add]\u001f[ONNX Layer: /model.4/m.0/Add_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.4/Concat]\u001f[ONNX Layer: /model.4/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.4/cv2/conv/Conv_myl0_26",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.4/cv2/conv/Conv_output_0.1_60_myl0",
+    "Dimensions": [-1,256,80,80],
+    "Strides": [1638400,1,20480,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31701dconst_myl0",
+    "Dimensions": [128,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31706dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31711dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31716dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_61_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/cv2/conv/Conv]\u001f[ONNX Layer: /model.4/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.4.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.4.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_27",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_61_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.14/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [2457600,1,30720,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x48fbdbea1a38e48f983669251fcb9221_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.4/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.4/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.4/cv2/act/Mul]"
+},{
+  "Name": "/model.5/conv/Conv_myl0_28",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.14/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [2457600,1,30720,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31721dconst_myl0",
+    "Dimensions": [256,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31726dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31731dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31736dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_63_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.5/conv/Conv]\u001f[ONNX Layer: /model.4/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.5.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.5.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_29",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_63_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44859_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/cv1/conv/Conv_output_0.1_64_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xa3e3787837f7270332e9c3323c7a0ce7_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.5/act/Sigmoid]\u001f[ONNX Layer: /model.5/act/Mul]\u001f[ONNX Layer: /model.5/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.6/cv1/conv/Conv_myl0_30",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/cv1/conv/Conv_output_0.1_64_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31741dconst_myl0",
+    "Dimensions": [256,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31746dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31751dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31756dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_65_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/cv1/conv/Conv]\u001f[ONNX Layer: /model.5/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.6.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCastSlicSlic_myl0_31",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_65_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44863_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/m.0/cv1/conv/Conv_output_0.1_67_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_66_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCastSlicSlic_0x09bfbe9d65f430d5b5ede2954eb23b40_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.6/cv1/act/Mul]\u001f[ONNX Layer: /model.6/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.6/Split]"
+},{
+  "Name": "/model.6/m.0/cv1/conv/Conv_myl0_32",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/m.0/cv1/conv/Conv_output_0.1_67_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31761dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31766dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31771dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31776dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_68_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.6/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.6.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_33",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_68_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44867_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/m.0/cv2/conv/Conv_output_0.1_69_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x5aeae97f3a9d357e309eeb45d9360e97_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.6/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.6/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.6/m.0/cv2/conv/Conv_myl0_34",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/m.0/cv2/conv/Conv_output_0.1_69_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31781dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31786dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31791dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31796dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_70_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.6/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.6.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCast_myl0_35",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "/model.6/m.0/cv1/conv/Conv_output_0.1_67_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_70_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44863_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44874_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44878_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44882_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/m.1/cv1/conv/Conv_output_0.1_71_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCast_0xd6a2cb722d0333556b6d2460d875c26e_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.6/m.0/cv2/act/Mul]\u001f[ONNX Layer: /model.6/m.0/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.6/m.0/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.6/m.0/Add]\u001f[ONNX Layer: /model.6/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: /model.6/m.0/Add_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.6/m.1/cv1/conv/Conv_myl0_36",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/m.1/cv1/conv/Conv_output_0.1_71_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31801dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31806dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31811dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31816dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_72_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.1/cv1/conv/Conv]\u001f[ONNX Layer: /model.6/m.0/Add_output_0_DequantizeLinear]\u001f[ONNX Layer: model.6.m.1.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.m.1.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_37",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_72_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44886_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/m.1/cv2/conv/Conv_output_0.1_73_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x5aeae97f3a9d357e309eeb45d9360e97_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.1/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.6/m.1/cv1/act/Mul]\u001f[ONNX Layer: /model.6/m.1/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.6/m.1/cv2/conv/Conv_myl0_38",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/m.1/cv2/conv/Conv_output_0.1_73_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31821dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31826dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31831dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31836dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_74_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.1/cv2/conv/Conv]\u001f[ONNX Layer: /model.6/m.1/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.6.m.1.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.m.1.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_myl0_39",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_66_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.6/m.0/cv1/conv/Conv_output_0.1_67_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.6/m.1/cv1/conv/Conv_output_0.1_71_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.6/m.1/cv1/conv/Conv_output_0.1_71_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_74_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44863_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44874_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44896_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44900_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.6/cv2/conv/Conv_output_0.1_75_myl0",
+    "Dimensions": [-1,512,40,40],
+    "Strides": [819200,1,20480,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_0xf1011831bf1ca0f60925bea652cfcaed_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/m.1/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.6/m.1/cv2/act/Mul]\u001f[ONNX Layer: /model.6/m.1/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.6/m.1/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.6/m.1/Add]\u001f[ONNX Layer: /model.6/m.0/Add_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.6/Concat]\u001f[ONNX Layer: /model.6/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.6/cv2/conv/Conv_myl0_40",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.6/cv2/conv/Conv_output_0.1_75_myl0",
+    "Dimensions": [-1,512,40,40],
+    "Strides": [819200,1,20480,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31841dconst_myl0",
+    "Dimensions": [256,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31846dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31851dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31856dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_76_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/cv2/conv/Conv]\u001f[ONNX Layer: /model.6/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.6.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.6.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_41",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_76_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.11/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [1228800,1,30720,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x993cf9116596c9d0cefd8cb4b01a8542_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.6/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.6/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.6/cv2/act/Mul]"
+},{
+  "Name": "/model.7/conv/Conv_myl0_42",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.11/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [1228800,1,30720,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31861dconst_myl0",
+    "Dimensions": [512,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31866dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31871dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31876dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_78_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.7/conv/Conv]\u001f[ONNX Layer: /model.6/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.7.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.7.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_43",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_78_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44904_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.8/cv1/conv/Conv_output_0.1_79_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xeba147b767448a906a9fd30a51c6c94f_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.7/act/Sigmoid]\u001f[ONNX Layer: /model.7/act/Mul]\u001f[ONNX Layer: /model.7/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.8/cv1/conv/Conv_myl0_44",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.8/cv1/conv/Conv_output_0.1_79_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31881dconst_myl0",
+    "Dimensions": [512,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31886dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31891dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31896dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_80_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/cv1/conv/Conv]\u001f[ONNX Layer: /model.7/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.8.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.8.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCastSlicSlic_myl0_45",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_80_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44908_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.8/m.0/cv1/conv/Conv_output_0.1_82_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_81_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCastSlicSlic_0xd383e1ffe661d823b0eb7da49ed4133a_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.8/cv1/act/Mul]\u001f[ONNX Layer: /model.8/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.8/Split]"
+},{
+  "Name": "/model.8/m.0/cv1/conv/Conv_myl0_46",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.8/m.0/cv1/conv/Conv_output_0.1_82_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31901dconst_myl0",
+    "Dimensions": [256,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31906dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31911dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31916dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_83_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.8/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.8.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.8.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_47",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_83_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44912_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.8/m.0/cv2/conv/Conv_output_0.1_84_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xdb9d1214875433fd170ad44e8c92c414_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.8/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.8/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.8/m.0/cv2/conv/Conv_myl0_48",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.8/m.0/cv2/conv/Conv_output_0.1_84_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31921dconst_myl0",
+    "Dimensions": [256,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31926dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31931dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31936dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_85_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.8/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.8.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.8.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_myl0_49",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_81_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.8/m.0/cv1/conv/Conv_output_0.1_82_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.8/m.0/cv1/conv/Conv_output_0.1_82_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_85_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44908_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44919_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44919_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44908_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.8/cv2/conv/Conv_output_0.1_86_myl0",
+    "Dimensions": [-1,768,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_CastMulSiluMulCastCastMulAddMulCastConc_0x92924851c30fafa20606afef1146b52f_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.8/m.0/cv2/act/Mul]\u001f[ONNX Layer: /model.8/m.0/cv2/act/Mul_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.8/m.0/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: /model.8/m.0/Add]\u001f[ONNX Layer: /model.8/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: /model.8/Concat]\u001f[ONNX Layer: /model.8/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.8/cv2/conv/Conv_myl0_50",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.8/cv2/conv/Conv_output_0.1_86_myl0",
+    "Dimensions": [-1,768,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31941dconst_myl0",
+    "Dimensions": [512,768,1,1],
+    "Strides": [768,1,768,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31946dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31951dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31956dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_87_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/cv2/conv/Conv]\u001f[ONNX Layer: /model.8/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.8.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.8.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_51",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_87_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44929_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.9/cv1/conv/Conv_output_0.1_88_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xeba147b767448a906a9fd30a51c6c94f_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.8/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.8/cv2/act/Mul]\u001f[ONNX Layer: /model.8/cv2/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.9/cv1/conv/Conv_myl0_52",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.9/cv1/conv/Conv_output_0.1_88_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31961dconst_myl0",
+    "Dimensions": [256,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31966dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31971dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31976dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_89_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/cv1/conv/Conv]\u001f[ONNX Layer: /model.8/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.9.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.9.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_53",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_89_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.9/m/MaxPool_output_0.1_91_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.9/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [409600,1,20480,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x7da31bcca62a95dbbe95f87e4e664bf2_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.9/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.9/cv1/act/Mul]"
+},{
+  "Name": "/model.9/m/MaxPool_myl0_54",
+  "LayerType": "maxpool",
+  "Inputs": [
+  {
+    "Name": "/model.9/m/MaxPool_output_0.1_91_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_92_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm50_xmma_pooling_coalescedC_NHWC_kMAX_3_False",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/m/MaxPool]"
+},{
+  "Name": "__myl_DivCast_myl0_55",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_92_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.9/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [409600,1,20480,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_DivCast_0x9e0e5495627f4395c5ae8920e63699c6_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.9/m_1/MaxPool_myl0_56",
+  "LayerType": "maxpool",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_92_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_94_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm50_xmma_pooling_coalescedC_NHWC_kMAX_3_False",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/m_1/MaxPool]"
+},{
+  "Name": "__myl_DivCast_myl0_57",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_94_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.9/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [409600,1,20480,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_DivCast_0x9e0e5495627f4395c5ae8920e63699c6_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.9/m_2/MaxPool_myl0_58",
+  "LayerType": "maxpool",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_94_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_96_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm50_xmma_pooling_coalescedC_NHWC_kMAX_3_False",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/m_2/MaxPool]"
+},{
+  "Name": "__myl_DivCast_myl0_59",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_96_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.9/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [409600,1,20480,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_DivCast_0x9e0e5495627f4395c5ae8920e63699c6_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.9/cv2/conv/Conv_myl0_60",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.9/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,1024,20,20],
+    "Strides": [409600,1,20480,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye31981dconst_myl0",
+    "Dimensions": [512,1024,1,1],
+    "Strides": [1024,1,1024,1024],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31986dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31991dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye31996dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_98_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.9/cv2/conv/Conv]\u001f[ONNX Layer: /model.9/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.9.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.9.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluResiDivCast_myl0_61",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_98_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_100_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.11/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,512,40,40],
+    "Strides": [1228800,1,30720,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluResiDivCast_0x1a13d918d087395a9c4cf3adb39687ff_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.10/Resize]\u001f[ONNX Layer: /model.11/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.9/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.9/cv2/act/Mul]"
+},{
+  "Name": "/model.12/cv1/conv/Conv_myl0_62",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.11/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,768,40,40],
+    "Strides": [1228800,1,30720,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32001dconst_myl0",
+    "Dimensions": [256,768,1,1],
+    "Strides": [768,1,768,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32006dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32011dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32016dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_101_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/cv1/conv/Conv]\u001f[ONNX Layer: /model.11/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.12.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.12.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCastSlic_myl0_63",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_101_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_103_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.12/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCastSlic_0xb9b37225932035093f36b1dda4f141d4_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/Split]\u001f[ONNX Layer: /model.12/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.12/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.12/cv1/act/Mul]"
+},{
+  "Name": "/model.12/m.0/cv1/conv/Conv_myl0_64",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.12/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32021dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32026dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32031dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32036dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_104_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.12/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.12.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.12.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_65",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_104_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44933_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.12/m.0/cv2/conv/Conv_output_0.1_106_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x5aeae97f3a9d357e309eeb45d9360e97_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.12/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.12/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.12/m.0/cv2/conv/Conv_myl0_66",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.12/m.0/cv2/conv/Conv_output_0.1_106_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32041dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32046dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32051dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32056dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_107_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.12/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.12.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.12.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_Slic_myl0_67",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_103_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.12/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Slic_0x6a04b1a62ee0a2b9ff133c485f42ec09_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/Split]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_68",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_107_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.12/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x0c77f20eba6da083902bbe570350825c_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.12/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.12/m.0/cv2/act/Mul]"
+},{
+  "Name": "/model.12/cv2/conv/Conv_myl0_69",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.12/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,384,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32061dconst_myl0",
+    "Dimensions": [256,384,1,1],
+    "Strides": [384,1,384,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32066dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32071dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32076dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_109_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.12/cv2/conv/Conv]\u001f[ONNX Layer: /model.12/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.12.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.12.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluResiDivCast_myl0_70",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_109_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_111_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.14/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,80,80],
+    "Strides": [2457600,1,30720,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluResiDivCast_0x7b2b26f2f9138170847fd78641e279da_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.13/Resize]\u001f[ONNX Layer: /model.14/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.12/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.12/cv2/act/Mul]"
+},{
+  "Name": "/model.15/cv1/conv/Conv_myl0_71",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.14/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,384,80,80],
+    "Strides": [2457600,1,30720,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32081dconst_myl0",
+    "Dimensions": [128,384,1,1],
+    "Strides": [384,1,384,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32086dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32091dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32096dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_112_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/cv1/conv/Conv]\u001f[ONNX Layer: /model.14/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.15.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.15.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCastSlic_myl0_72",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_112_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_114_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.15/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCastSlic_0x805ba3626b861b5fc8ef60ec7b2174c1_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/Split]\u001f[ONNX Layer: /model.15/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.15/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.15/cv1/act/Mul]"
+},{
+  "Name": "/model.15/m.0/cv1/conv/Conv_myl0_73",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.15/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32101dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32106dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32111dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32116dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_115_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.15/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.15.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.15.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_74",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_115_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44937_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.15/m.0/cv2/conv/Conv_output_0.1_117_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xa02014f2265efc87e4e4f712838854c9_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.15/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.15/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.15/m.0/cv2/conv/Conv_myl0_75",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.15/m.0/cv2/conv/Conv_output_0.1_117_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32121dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32126dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32131dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32136dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_118_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.15/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.15.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.15.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_Slic_myl0_76",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_114_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.15/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Slic_0x91385f6cfb45aa7481a76973d93e0cc5_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/Split]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_77",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_118_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.15/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0xd97ba7b58de8f21dd9d0c5d4a3915a86_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.15/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.15/m.0/cv2/act/Mul]"
+},{
+  "Name": "/model.15/cv2/conv/Conv_myl0_78",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.15/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,192,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32141dconst_myl0",
+    "Dimensions": [128,192,1,1],
+    "Strides": [192,1,192,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32146dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32151dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32156dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_120_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/cv2/conv/Conv]\u001f[ONNX Layer: /model.15/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.15.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.15.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_79",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_120_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44941_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.16/conv/Conv_output_0.1_122_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_121_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xc4e5bdfccd5fe5f558bc09b72897375c_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.15/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.15/cv2/act/Mul]\u001f[ONNX Layer: /model.15/cv2/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.16/conv/Conv_myl0_80",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.16/conv/Conv_output_0.1_122_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32211dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32216dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32221dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32226dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_132_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.16/conv/Conv]\u001f[ONNX Layer: /model.15/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.16.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.16.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_81",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_132_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.17/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0xc9a3f4ccb9e6d2e50b4ca7f8b74a97d7_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.17/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.16/act/Sigmoid]\u001f[ONNX Layer: /model.16/act/Mul]"
+},{
+  "Name": "__myl_DivCast_myl0_82",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_111_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.17/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_DivCast_0x952bfeba6f787b3e1cea5e7e936ff87d_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.17/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.18/cv1/conv/Conv_myl0_83",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.17/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,384,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32231dconst_myl0",
+    "Dimensions": [256,384,1,1],
+    "Strides": [384,1,384,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32236dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32241dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32246dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_135_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/cv1/conv/Conv]\u001f[ONNX Layer: /model.17/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.18.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.18.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCastSlic_myl0_84",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_135_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_137_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.18/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCastSlic_0x81d2fc7820584bceca2222892b225c41_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/Split]\u001f[ONNX Layer: /model.18/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.18/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.18/cv1/act/Mul]"
+},{
+  "Name": "/model.18/m.0/cv1/conv/Conv_myl0_85",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.18/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32251dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32256dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32261dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32266dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_138_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.18/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.18.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.18.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_86",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_138_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44945_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.18/m.0/cv2/conv/Conv_output_0.1_140_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x5aeae97f3a9d357e309eeb45d9360e97_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.18/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.18/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.18/m.0/cv2/conv/Conv_myl0_87",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.18/m.0/cv2/conv/Conv_output_0.1_140_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32271dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32276dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32281dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32286dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_141_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.18/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.18.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.18.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_Slic_myl0_88",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_137_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.18/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Slic_0x6a04b1a62ee0a2b9ff133c485f42ec09_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/Split]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_89",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_141_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.18/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x0252c0e9f9cb345b52b73bf34c3f5c9f_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.18/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.18/m.0/cv2/act/Mul]"
+},{
+  "Name": "/model.18/cv2/conv/Conv_myl0_90",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.18/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,384,40,40],
+    "Strides": [614400,1,15360,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32291dconst_myl0",
+    "Dimensions": [256,384,1,1],
+    "Strides": [384,1,384,384],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32296dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32301dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32306dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_143_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x128x64_stage3_warpsize2x2x1_g1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/cv2/conv/Conv]\u001f[ONNX Layer: /model.18/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.18.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.18.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_91",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_143_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44949_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.19/conv/Conv_output_0.1_145_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_144_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0x2e248ee265206ff7ae9669ec6a537dc3_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.18/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.18/cv2/act/Mul]\u001f[ONNX Layer: /model.18/cv2/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.22/cv3.1/cv3.1.0/conv/Conv+/model.22/cv2.1/cv2.1.0/conv/Conv_myl0_92",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_144_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32311dconst_myl0",
+    "Dimensions": [192,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32316dconst_myl0",
+    "Dimensions": [1,192,1,1],
+    "Strides": [192,1,192,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__mye29585_myl0",
+    "Dimensions": [-1,192,40,40],
+    "Strides": [307200,1,7680,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x64x64_stage3_warpsize2x2x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.1/cv3.1.0/conv/Conv]\u001f[ONNX Layer: /model.22/cv2.1/cv2.1.0/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_93",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29585_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [307200,1,7680,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.1/cv2.1.1/conv/Conv_output_0.1_151_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x536abbb0847ef1984ad2bbe40814ea1b_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.1/cv2.1.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.1/cv2.1.0/act/Mul]"
+},{
+  "Name": "/model.22/cv2.1/cv2.1.1/conv/Conv_myl0_94",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.1/cv2.1.1/conv/Conv_output_0.1_151_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32341dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32346dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_152_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage4_warpsize2x2x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.1/cv2.1.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_95",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_152_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.1/cv2.1.2/Conv_output_0.1_153_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x31f6e05a87b21e9ad1fb17fc4b1d1cfa_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.1/cv2.1.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.1/cv2.1.1/act/Mul]"
+},{
+  "Name": "/model.22/cv2.1/cv2.1.2/Conv_myl0_96",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.1/cv2.1.2/Conv_output_0.1_153_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32351dconst_myl0",
+    "Dimensions": [64,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32356dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.1/cv2.1.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,40,40],
+    "Strides": [102400,1,2560,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x16_alignc8",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.1/cv2.1.2/Conv]"
+},{
+  "Name": "/model.22/cv3.0/cv3.0.0/conv/Conv+/model.22/cv2.0/cv2.0.0/conv/Conv_myl0_97",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_121_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32161dconst_myl0",
+    "Dimensions": [192,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32166dconst_myl0",
+    "Dimensions": [1,192,1,1],
+    "Strides": [192,1,192,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__mye29606_myl0",
+    "Dimensions": [-1,192,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize256x64x32_stage3_warpsize4x1x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.0/cv3.0.0/conv/Conv]\u001f[ONNX Layer: /model.22/cv2.0/cv2.0.0/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_98",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29606_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.1/conv/Conv_output_0.1_128_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x1ec2fcaf7f76c4a7c045f49d90184095_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.0/cv2.0.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.0/cv2.0.0/act/Mul]"
+},{
+  "Name": "/model.22/cv2.0/cv2.0.1/conv/Conv_myl0_99",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.1/conv/Conv_output_0.1_128_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32191dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32196dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_129_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize256x64x32_stage3_warpsize4x1x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.0/cv2.0.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_100",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_129_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.2/Conv_output_0.1_130_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xcf3ca48b1153f4a2cf0ca8354e1e6a3b_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.0/cv2.0.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.0/cv2.0.1/act/Mul]"
+},{
+  "Name": "/model.22/cv2.0/cv2.0.2/Conv_myl0_101",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.2/Conv_output_0.1_130_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32201dconst_myl0",
+    "Dimensions": [64,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32206dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,80,80],
+    "Strides": [409600,1,5120,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x16_alignc8",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.0/cv2.0.2/Conv]"
+},{
+  "Name": "/model.19/conv/Conv_myl0_102",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.19/conv/Conv_output_0.1_145_myl0",
+    "Dimensions": [-1,256,40,40],
+    "Strides": [409600,1,10240,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32361dconst_myl0",
+    "Dimensions": [256,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32366dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32371dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32376dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_155_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.19/conv/Conv]\u001f[ONNX Layer: /model.18/cv2/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.19.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.19.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_103",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_155_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.20/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x462bd64f8624ac94888decc1ce62964c_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.20/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.19/act/Sigmoid]\u001f[ONNX Layer: /model.19/act/Mul]"
+},{
+  "Name": "__myl_DivCast_myl0_104",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_100_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.20/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_DivCast_0x19f03fcd412486d863fb5dfd64deb01d_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.20/Concat_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.21/cv1/conv/Conv_myl0_105",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.20/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,768,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32381dconst_myl0",
+    "Dimensions": [512,768,1,1],
+    "Strides": [768,1,768,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32386dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32391dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32396dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_158_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_gemm_e4m3f16_e4m3f32_f32_tn_n_tilesize128x128x64_stage3_warpsize2x2x1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/cv1/conv/Conv]\u001f[ONNX Layer: /model.20/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.21.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.21.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluDivCastSlic_myl0_106",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_158_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_160_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.21/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCastSlic_0x5c114e548431002d89b7d3f2812d769a_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/Split]\u001f[ONNX Layer: /model.21/Split_output_1_QuantizeLinear]\u001f[ONNX Layer: /model.21/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.21/cv1/act/Mul]"
+},{
+  "Name": "/model.21/m.0/cv1/conv/Conv_myl0_107",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.21/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32401dconst_myl0",
+    "Dimensions": [256,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32406dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32411dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32416dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_161_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/m.0/cv1/conv/Conv]\u001f[ONNX Layer: /model.21/Split_output_1_DequantizeLinear]\u001f[ONNX Layer: model.21.m.0.cv1.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.21.m.0.cv1.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_SiluMulCast_myl0_108",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_161_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye44989_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.21/m.0/cv2/conv/Conv_output_0.1_163_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluMulCast_0xdb9d1214875433fd170ad44e8c92c414_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/m.0/cv1/act/Sigmoid]\u001f[ONNX Layer: /model.21/m.0/cv1/act/Mul]\u001f[ONNX Layer: /model.21/m.0/cv1/act/Mul_output_0_QuantizeLinear]"
+},{
+  "Name": "/model.21/m.0/cv2/conv/Conv_myl0_109",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.21/m.0/cv2/conv/Conv_output_0.1_163_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32421dconst_myl0",
+    "Dimensions": [256,256,3,3],
+    "Strides": [2304,1,768,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32426dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32431dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32436dconst_myl0",
+    "Dimensions": [1,256,1,1],
+    "Strides": [256,1,256,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_164_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_fprop_implicit_gemm_e4m3f16_e4m3f32_f32_nhwckrsc_nhwc_tilesize128x64x64_stage4_warpsize2x2x1_g1_tensor16x8x32_bias_f16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/m.0/cv2/conv/Conv]\u001f[ONNX Layer: /model.21/m.0/cv1/act/Mul_output_0_DequantizeLinear]\u001f[ONNX Layer: model.21.m.0.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.21.m.0.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_Slic_myl0_110",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_160_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.21/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Slic_0x095da2d0c4bf6d5ac5b7cb1d291a48fc_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/Split]"
+},{
+  "Name": "__myl_SiluDivCast_myl0_111",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_164_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [102400,1,5120,256],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.21/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,256,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_SiluDivCast_0x839886f4111f964d581fe9ef0f3a3666_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/Concat_output_0_QuantizeLinear]\u001f[ONNX Layer: /model.21/m.0/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.21/m.0/cv2/act/Mul]"
+},{
+  "Name": "/model.21/cv2/conv/Conv_myl0_112",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.21/Concat_output_0_QuantizeLinear_Output.1_myl0",
+    "Dimensions": [-1,768,20,20],
+    "Strides": [307200,1,15360,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32441dconst_myl0",
+    "Dimensions": [512,768,1,1],
+    "Strides": [768,1,768,768],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "FP8",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32446dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32451dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Float",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye32456dconst_myl0",
+    "Dimensions": [1,512,1,1],
+    "Strides": [512,1,512,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_166_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm89_xmma_gemm_e4m3f16_e4m3f32_f32_tn_n_tilesize128x128x64_stage3_warpsize2x2x1_tensor16x8x32_bias_f16",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/cv2/conv/Conv]\u001f[ONNX Layer: /model.21/Concat_output_0_DequantizeLinear]\u001f[ONNX Layer: model.21.cv2.conv.weight_DequantizeLinear]\u001f[ONNX Layer: model.21.cv2.conv.weight_QuantizeLinear]"
+},{
+  "Name": "__myl_Silu_myl0_113",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_166_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__mye29564_167_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x3c282a6830b0bb5e9139a6d797db65f8_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.21/cv2/act/Sigmoid]\u001f[ONNX Layer: /model.21/cv2/act/Mul]"
+},{
+  "Name": "/model.22/cv3.2/cv3.2.0/conv/Conv+/model.22/cv2.2/cv2.2.0/conv/Conv_myl0_114",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "__mye29564_167_myl0",
+    "Dimensions": [-1,512,20,20],
+    "Strides": [204800,1,10240,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32461dconst_myl0",
+    "Dimensions": [192,512,3,3],
+    "Strides": [4608,1,1536,512],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32466dconst_myl0",
+    "Dimensions": [1,192,1,1],
+    "Strides": [192,1,192,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__mye29564_myl0",
+    "Dimensions": [-1,192,20,20],
+    "Strides": [76800,1,3840,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize256x64x32_stage3_warpsize4x1x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.2/cv3.2.0/conv/Conv]\u001f[ONNX Layer: /model.22/cv2.2/cv2.2.0/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_115",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29564_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [76800,1,3840,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.2/cv2.2.1/conv/Conv_output_0.1_173_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xbd3abebc6f7fe3322fd4f3aac408c50d_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.2/cv2.2.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.2/cv2.2.0/act/Mul]"
+},{
+  "Name": "/model.22/cv2.2/cv2.2.1/conv/Conv_myl0_116",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.2/cv2.2.1/conv/Conv_output_0.1_173_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32491dconst_myl0",
+    "Dimensions": [64,64,3,3],
+    "Strides": [576,1,192,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32496dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_174_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x64x32_stage5_warpsize2x2x1_g1_tensor16x8x16_t1r3s3",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.2/cv2.2.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_117",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_174_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.2/cv2.2.2/Conv_output_0.1_175_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x51def64ccec29b1370c9a395280d74b3_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.2/cv2.2.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv2.2/cv2.2.1/act/Mul]"
+},{
+  "Name": "/model.22/cv2.2/cv2.2.2/Conv_myl0_118",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.2/cv2.2.2/Conv_output_0.1_175_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32501dconst_myl0",
+    "Dimensions": [64,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32506dconst_myl0",
+    "Dimensions": [1,64,1,1],
+    "Strides": [64,1,64,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv2.2/cv2.2.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,20,20],
+    "Strides": [25600,1,1280,64],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x64x32_stage5_warpsize2x2x1_g1_tensor16x8x16_simple_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv2.2/cv2.2.2/Conv]"
+},{
+  "Name": "__myl_ConcReshTranMaxrSubExpSumDiv_myl0_119",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv2.0/cv2.0.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,6400],
+    "Strides": [409600,1,64],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.22/cv2.1/cv2.1.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,1600],
+    "Strides": [102400,1,64],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.22/cv2.2/cv2.2.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,64,400],
+    "Strides": [25600,1,64],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__mye39217_177_myl0",
+    "Dimensions": [-1,16,4,8400],
+    "Strides": [537600,1,134400,16],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_ConcReshTranMaxrSubExpSumDiv_0xa2b9ae5140627be76ad0e7e0af7d6271",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/Concat_3]\u001f[ONNX Layer: /model.22/dfl/Reshape]\u001e[ONNX Layer: /model.22/dfl/Transpose]\u001f[ONNX Layer: /model.22/dfl/Softmax]"
+},{
+  "Name": "/model.22/dfl/conv/Conv_myl0_120",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "__mye39217_177_myl0",
+    "Dimensions": [-1,16,4,8400],
+    "Strides": [537600,1,134400,16],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye39212_dconst_myl0",
+    "Dimensions": [2,16,1,1],
+    "Strides": [16,1,16,16],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_178_myl0",
+    "Dimensions": [-1,2,4,8400],
+    "Strides": [67200,1,16800,2],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x16_alignc4",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/dfl/conv/Conv]"
+},{
+  "Name": "__myl_Slic_myl0_121",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_178_myl0",
+    "Dimensions": [-1,2,4,8400],
+    "Strides": [67200,1,16800,2],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__mye39219_myl0",
+    "Dimensions": [-1,1,4,8400],
+    "Strides": [33600,1,8400,1],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Slic_0xd3916679006e8be87b3976162a096d36",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/dfl/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_122",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29585_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [307200,1,7680,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.1/cv3.1.1/conv/Conv_output_0.1_147_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xed65a2bebfcdf7041f701b1e9e539094_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.1/cv3.1.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.1/cv3.1.0/act/Mul]"
+},{
+  "Name": "/model.22/cv3.1/cv3.1.1/conv/Conv_myl0_123",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.1/cv3.1.1/conv/Conv_output_0.1_147_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32321dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32326dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_148_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x64x64_stage3_warpsize2x2x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.1/cv3.1.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_124",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_148_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.1/cv3.1.2/Conv_output_0.1_149_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xd02d5ed769138c59efcac55dcaee6088_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.1/cv3.1.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.1/cv3.1.1/act/Mul]"
+},{
+  "Name": "/model.22/cv3.1/cv3.1.2/Conv_myl0_125",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.1/cv3.1.2/Conv_output_0.1_149_myl0",
+    "Dimensions": [-1,128,40,40],
+    "Strides": [204800,1,5120,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32331dconst_myl0",
+    "Dimensions": [80,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32336dconst_myl0",
+    "Dimensions": [1,80,1,1],
+    "Strides": [80,1,80,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.1/cv3.1.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,40,40],
+    "Strides": [128000,1,3200,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x16_alignc8",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.1/cv3.1.2/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_126",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29606_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [1228800,1,15360,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.0/cv3.0.1/conv/Conv_output_0.1_124_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xb54a2673e34ee9cb9f2865495027e296_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.0/cv3.0.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.0/cv3.0.0/act/Mul]"
+},{
+  "Name": "/model.22/cv3.0/cv3.0.1/conv/Conv_myl0_127",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.0/cv3.0.1/conv/Conv_output_0.1_124_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32171dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32176dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_125_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x128x32_stage4_warpsize2x2x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.0/cv3.0.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_128",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_125_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.0/cv3.0.2/Conv_output_0.1_126_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0x7ca4d8577f225124870f849b70bd71d4_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.0/cv3.0.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.0/cv3.0.1/act/Mul]"
+},{
+  "Name": "/model.22/cv3.0/cv3.0.2/Conv_myl0_129",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.0/cv3.0.2/Conv_output_0.1_126_myl0",
+    "Dimensions": [-1,128,80,80],
+    "Strides": [819200,1,10240,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32181dconst_myl0",
+    "Dimensions": [80,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32186dconst_myl0",
+    "Dimensions": [1,80,1,1],
+    "Strides": [80,1,80,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.0/cv3.0.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,80,80],
+    "Strides": [512000,1,6400,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x16_alignc8",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.0/cv3.0.2/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_130",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye29564_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [76800,1,3840,192],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.2/cv3.2.1/conv/Conv_output_0.1_169_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xd1a93c92b59acd2b21efdacc14c2fbbc_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.2/cv3.2.0/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.2/cv3.2.0/act/Mul]"
+},{
+  "Name": "/model.22/cv3.2/cv3.2.1/conv/Conv_myl0_131",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.2/cv3.2.1/conv/Conv_output_0.1_169_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32471dconst_myl0",
+    "Dimensions": [128,128,3,3],
+    "Strides": [1152,1,384,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32476dconst_myl0",
+    "Dimensions": [1,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_170_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage4_warpsize2x2x1_g1_tensor16x8x16_t1r3s3_aACCESS",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.2/cv3.2.1/conv/Conv]"
+},{
+  "Name": "__myl_Silu_myl0_132",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__myln_k_arg__bb1_170_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.2/cv3.2.2/Conv_output_0.1_171_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "__myl_Silu_0xbcb4dc8eb68518a61d4dbea31827ba64_vec",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.2/cv3.2.1/act/Sigmoid]\u001f[ONNX Layer: /model.22/cv3.2/cv3.2.1/act/Mul]"
+},{
+  "Name": "/model.22/cv3.2/cv3.2.2/Conv_myl0_133",
+  "LayerType": "correlation",
+  "Inputs": [
+  {
+    "Name": "/model.22/cv3.2/cv3.2.2/Conv_output_0.1_171_myl0",
+    "Dimensions": [-1,128,20,20],
+    "Strides": [51200,1,2560,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye32481dconst_myl0",
+    "Dimensions": [80,128,1,1],
+    "Strides": [128,1,128,128],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye44771_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye44775_const_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye32486dconst_myl0",
+    "Dimensions": [1,80,1,1],
+    "Strides": [80,1,80,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "Outputs": [
+  {
+    "Name": "/model.22/cv3.2/cv3.2.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,20,20],
+    "Strides": [32000,1,1600,80],
+    "StrideOrder": [3,0,2,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  }],
+  "TacticName": "sm80_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x32_stage4_warpsize4x1x1_g1_tensor16x8x16_simple_t1r1s1",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/cv3.2/cv3.2.2/Conv]"
+},{
+  "Name": "__myl_IotaCastCastIotaCastCastIotaCastCastAddReshReplReshReshReplReshConcReshAddReshReplReshReshEtc_myl0_134",
+  "LayerType": "kgen",
+  "Inputs": [],
+  "Constants": [],
+  "Outputs": [
+  {
+    "Name": "__myln_k_arg__bb1_180_myl0",
+    "Dimensions": [2,8400],
+    "Strides": [8400,1],
+    "StrideOrder": [1,0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "TacticName": "__myl_IotaCastCastIotaCastCastIotaCastCastAddReshReplReshReshReplReshConcReshAddReshReplReshReshEtc_0xd3b2961c28907efbe969c3b78b20ecde",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/Reshape_19_output_0]\u001f[ONNX Layer: /model.22/Range_3]\u001f[ONNX Layer: /model.22/Add_2]\u001f[ONNX Layer: /model.22/Cast_7_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/Reshape_13_output_0]\u001f[ONNX Layer: /model.22/Reshape_9_output_0]\u001f[ONNX Layer: /model.22/Expand_4]\u001f[ONNX Layer: /model.22/Unsqueeze_13]\u001f[ONNX Layer: /model.22/Concat_21]\u001f[ONNX Layer: /model.22/Reshape_20]\u001f[ONNX Layer: /model.22/Expand_3]\u001f[ONNX Layer: /model.22/Unsqueeze_9]\u001f[ONNX Layer: /model.22/Expand]\u001f[ONNX Layer: /model.22/Unsqueeze_7]\u001f[ONNX Layer: /model.22/Concat_11]\u001f[ONNX Layer: /model.22/Reshape_10]\u001f[ONNX Layer: /model.22/Transpose]\u001e[ONNX Layer: /model.22/Unsqueeze_15]\u001f[ONNX Layer: /model.22/Concat_23]\u001f[ONNX Layer: /model.22/Unsqueeze_6]\u001f[ONNX Layer: /model.22/Expand_1]\u001f[ONNX Layer: /model.22/Reshape_15]\u001f[ONNX Layer: /model.22/Concat_16]\u001f[ONNX Layer: /model.22/Unsqueeze_10]\u001f[ONNX Layer: /model.22/Expand_2]\u001f[ONNX Layer: /model.22/Unsqueeze_12]\u001f[ONNX Layer: /model.22/Expand_5]\u001f[ONNX Layer: /model.22/Reshape_8_output_0]\u001f[ONNX Layer: /model.22/Cast_3_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/Add]\u001f[ONNX Layer: /model.22/Range_1]\u001f[ONNX Layer: /model.22/Reshape_14_output_0]\u001f[ONNX Layer: /model.22/Reshape_18_output_0]\u001f[ONNX Layer: /model.22/Cast_11_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/Add_4]\u001f[ONNX Layer: /model.22/Range_5]"
+},{
+  "Name": "__myl_ConcSigmSlicSlicReshAddSubSubAddMulConcMulConcCast_myl0_135",
+  "LayerType": "kgen",
+  "Inputs": [
+  {
+    "Name": "__mye39219_myl0",
+    "Dimensions": [-1,4,8400],
+    "Strides": [33600,8400,1],
+    "StrideOrder": [2,1,0],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.22/cv3.0/cv3.0.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,6400],
+    "Strides": [512000,1,80],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.22/cv3.1/cv3.1.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,1600],
+    "Strides": [128000,1,80],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "/model.22/cv3.2/cv3.2.2/Conv_output_0.1_myl0",
+    "Dimensions": [-1,80,400],
+    "Strides": [32000,1,80],
+    "StrideOrder": [2,0,1],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__mye39219_myl0",
+    "Dimensions": [-1,4,8400],
+    "Strides": [33600,8400,1],
+    "StrideOrder": [2,1,0],
+    "Datatype": "Half",
+    "Format": "(NHWC) Channel major format"
+  },
+  {
+    "Name": "__myln_k_arg__bb1_180_myl0",
+    "Dimensions": [2,8400],
+    "Strides": [8400,1],
+    "StrideOrder": [1,0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "Constants": [
+  {
+    "Name": "__mye45053_const-lit-in_myl0",
+    "Dimensions": [1],
+    "Strides": [1],
+    "StrideOrder": [0],
+    "Datatype": "Half",
+    "Format": "(Linear) Row major linear format"
+  },
+  {
+    "Name": "__mye22799_dconst_myl0",
+    "Dimensions": [1,1,8400],
+    "Strides": [1,8400,1],
+    "StrideOrder": [0,2,1],
+    "Datatype": "Half",
+    "Format": "(Arbitrary) Format with stride order = [0,2,1]"
+  }],
+  "Outputs": [
+  {
+    "Name": "output0",
+    "Dimensions": [-1,84,8400],
+    "Strides": [705600,8400,1],
+    "StrideOrder": [2,1,0],
+    "Datatype": "Float",
+    "Format": "(Linear) Row major linear format"
+  }],
+  "TacticName": "__myl_ConcSigmSlicSlicReshAddSubSubAddMulConcMulConcCast_0x948baf332d2a764933ebc8cf474d5c0c",
+  "StreamId": 0,
+  "Metadata": "[ONNX Layer: /model.22/Transpose]\u001e[ONNX Layer: /model.22/Unsqueeze_15]\u001f[ONNX Layer: /model.22/Slice]\u001f[ONNX Layer: /model.22/Sub]\u001f[ONNX Layer: /model.22/Sub_1]\u001f[ONNX Layer: /model.22/Concat_7]\u001f[ONNX Layer: /model.22/Sigmoid]\u001f[ONNX Layer: output0_cast_to_fp32]\u001f[ONNX Layer: /model.22/Concat_26]\u001f[ONNX Layer: /model.22/Mul_5]\u001f[ONNX Layer: /model.22/Transpose_1]\u001f[ONNX Layer: /model.22/Concat_24]\u001f[ONNX Layer: /model.22/ConstantOfShape_2_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/ConstantOfShape_1_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/ConstantOfShape_output_0_cast_to_fp16]\u001f[ONNX Layer: /model.22/Concat_25]\u001f[ONNX Layer: /model.22/Div_1]\u001f[ONNX Layer: /model.22/Add_8]\u001f[ONNX Layer: /model.22/Add_7]\u001f[ONNX Layer: /model.22/Slice_1]"
+}],
+"I/O Tensors": [
+{
+  "Name": "images",
+  "IOMode": "Input",
+  "DataType": "Float",
+  "Dimensions": [-1,3,640,640],
+  "Location": "Device",
+  "IsShapeInferenceIO": false,
+  "ProfileInfo": [
+  {
+    "MinShape": [1,3,640,640],
+    "OptShape": [8,3,640,640],
+    "MaxShape": [32,3,640,640],
+    "Format": "Row major linear FP32 format (kLINEAR)"
+  }]
+},
+{
+  "Name": "output0",
+  "IOMode": "Output",
+  "DataType": "Float",
+  "Dimensions": [-1,84,8400],
+  "Location": "Device",
+  "IsShapeInferenceIO": false,
+  "ProfileInfo": [
+  {
+    "Format": "Row major linear FP32 format (kLINEAR)"
+  }]
+}],
+"Engine Metadata": {
+  "Multi-Device": "Disabled"
+}}

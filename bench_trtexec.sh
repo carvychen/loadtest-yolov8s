@@ -78,7 +78,7 @@ for v in $VARIANTS; do
       fi
       # 不用 grep -P / 不让未匹配的 grep 触发 set -e: 解析失败时明确报错并打印日志
       tput=$(grep -oE "Throughput: [0-9.]+" "$RLOG" | tail -1 | grep -oE "[0-9.]+$" || true)
-      gline=$(grep "GPU Compute Time:" "$RLOG" | tail -1 || true)
+      gline=$(grep "GPU Compute Time: min" "$RLOG" | tail -1 || true)   # 日志末尾的指标说明里也有 "GPU Compute Time:", 要避开
       mean=$(grep -oE "mean = [0-9.]+" <<< "$gline" | grep -oE "[0-9.]+$" || true)
       p99=$(grep -oE "percentile\(99%\) = [0-9.]+" <<< "$gline" | grep -oE "[0-9.]+$" || true)
       if [ -z "$tput" ]; then

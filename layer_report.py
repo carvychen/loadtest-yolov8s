@@ -12,7 +12,7 @@ from collections import defaultdict
 
 def precision_of(fmt):
     f = (fmt or "").lower()
-    for key, pat in (("FP8", r"fp8|e4m3"), ("INT8", r"int8"), ("FP16", r"fp16|half"),
+    for key, pat in (("FP8", r"fp8|e4m3|float8"), ("INT8", r"int8"), ("FP16", r"fp16|half"),
                      ("FP32", r"fp32|float")):
         if re.search(pat, f):
             return key
@@ -48,7 +48,8 @@ def load(prefix):
             continue
         ins = L.get("Inputs") or [{}]
         rows.append({"name": L.get("Name", ""), "kind": kind_of(L),
-                     "prec": precision_of(ins[0].get("Format/Datatype")),
+                     # TRT 10: "Format/Datatype" 合在一个字段; TRT 11: 拆成 "Datatype" + "Format"
+                     "prec": precision_of(ins[0].get("Format/Datatype") or ins[0].get("Datatype")),
                      "ms": t.get(L.get("Name", ""), 0.0), "tactic": L.get("TacticName", "")})
     return rows
 
