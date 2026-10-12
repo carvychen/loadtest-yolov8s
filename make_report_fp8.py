@@ -106,12 +106,41 @@ make_table(doc, ["建议", "依据"], [
     ["使用 TensorRT 11.3 及以上构建 FP8 引擎", "batch 8 加速 1.38× → 1.55×"],
     ["在线服务开启动态批处理,目标 batch ≥ 8", "batch 1 仅 1.25×,batch 8 达 1.55×"],
     ["精度敏感场景检测头保留 FP16", "mAP 损失 0.41 → 0.22 pt,速度约 −9%"],
-    ["优化端到端 I/O:FP16 / uint8 输入、NMS 融入引擎、GPU 预处理", "数据搬运约占请求延迟 75%,是端到端提升的主要空间"],
+    ["优化端到端 I/O:FP16 / uint8 输入、NMS 融入引擎、GPU 预处理", "数据搬运约占请求延迟 75%,是端到端提升的主要空间(详见第六节)"],
     ["跟进 TensorRT 后续版本的 FP8 Conv + SiLU 融合", "SiLU 占 FP8 GPU 时间 27%"],
 ], widths=[3.4, 3.3])
 
-# ── 六、说明 ──
-doc.add_heading("六、说明", level=1)
+# ── 六、端到端 I/O 优化方向 ──
+doc.add_heading("六、端到端 I/O 优化方向", level=1)
+note("现状:每次请求传输 FP32 输入 4.7 MB + FP32 原始输出 2.7 MB,I/O 相关环节约 12.8 ms,占请求延迟 75%(见 3.4)。"
+     "以下为优化方案与数据量估算,延迟收益需实测确认。")
+
+doc.add_heading("6.1 优化方案", level=2)
+make_table(doc, ["方案", "做法", "作用环节", "改动"], [
+    ["uint8 输入", "客户端发送 uint8 图像;归一化(/255)与类型转换作为模型前置节点在 GPU 执行",
+     "网络收发、输入拷贝、客户端发送", "低"],
+    ["NMS 融入引擎", "导出时加入 TensorRT EfficientNMS,引擎直接输出 ≤ 300 个检测框",
+     "输出拷贝、网络收发、客户端 NMS", "低"],
+    ["JPEG + GPU 解码", "客户端发送 JPEG;Triton DALI 后端在 GPU 上解码、缩放、letterbox",
+     "网络收发、客户端预处理", "中"],
+    ["共享内存", "客户端与 Triton 同机时,用 CUDA / 系统共享内存传张量,免去 gRPC 序列化",
+     "网络收发、序列化", "低(仅同机)"],
+    ["多实例", "instance_group 设 2 个实例,使数据拷贝与 GPU 计算重叠",
+     "排队、输入 / 输出拷贝", "低"],
+], widths=[1.15, 3.15, 1.65, 0.75])
+
+doc.add_heading("6.2 单次请求数据量(640×640)", level=2)
+make_table(doc, ["组合", "输入", "输出", "合计", "相对现状"], [
+    ["现状:FP32 输入 + 原始输出", "4.7 MB", "2.7 MB", "7.4 MB", "—"],
+    ["uint8 输入", "1.2 MB", "2.7 MB", "3.9 MB", "−47%"],
+    ["uint8 输入 + NMS 融入引擎", "1.2 MB", "< 0.01 MB", "1.2 MB", "−84%"],
+    ["JPEG + NMS 融入引擎", "约 0.1 MB", "< 0.01 MB", "约 0.1 MB", "约 −98%"],
+], widths=[2.3, 1.0, 1.0, 1.0, 1.0], highlight_row=2)
+note("建议先做 uint8 输入 + NMS 融入引擎:改动小,数据量 −84%。I/O 降下来后,FP8 的 GPU 收益才能在端到端体现。"
+     "JPEG 大小随图像内容与压缩质量变化。")
+
+# ── 七、说明 ──
+doc.add_heading("七、说明", level=1)
 bullet(doc, "测试硬件为 Blackwell;客户 L4 为 Ada 架构,FP8 kernel 不同,绝对加速比不可直接套用,TensorRT 版本、batch、I/O 三项影响因素同样需要考虑。", size=9.5)
 bullet(doc, "吞吐以 trtexec 整体计时为准;逐层 profile 仅用于耗时构成的相对比较。", size=9.5)
 bullet(doc, "mAP 采用固定 640×640 letterbox,绝对值略低于 Ultralytics 官方(rect 批推理),各精度同口径可比。", size=9.5)
