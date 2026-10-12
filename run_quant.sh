@@ -11,7 +11,9 @@ TAG="${TRITON_TAG:-25.08}"
 SERVER="nvcr.io/nvidia/tritonserver:${TAG}-py3"
 SDK="nvcr.io/nvidia/tritonserver:${TAG}-py3-sdk"
 QIMG="yolo-quant:modelopt-0.47.0"
-export VARIANTS="${VARIANTS:-fp16 fp8 int8}"   # 可加 fp8-nohead / int8-nohead: 检测头 (model.22) 不量化
+# 变体名 = <精度>[-标签...]。量化标签 (改 Q/DQ ONNX): nohead = 检测头 model.22 不量化, conv = 只量化 Conv (不量化 Add);
+# 构建标签 (同一 ONNX, 只改 trtexec 参数): opt5 = --builderOptimizationLevel=5。例: fp8-nohead, fp8-opt5, int8-nohead
+export VARIANTS="${VARIANTS:-fp16 fp8 int8}"
 OUT=results/quant
 CALIB=datasets/calib_500.npy
 mkdir -p "$OUT"
@@ -29,20 +31,33 @@ qrun "$QIMG" python fetch_coco.py
 [ -f "$CALIB" ] || qrun "$QIMG" python prep_calib.py "$CALIB"
 
 echo "[3/7] ModelOpt 量化 -> yolov8s.<variant>.onnx (Q/DQ ONNX 与 GPU 无关, 已存在则跳过)"
+# FP16 基线: TensorRT 11 移除了弱类型 (--fp16), 需要先用 ModelOpt AutoCast 转成 FP16 ONNX (I/O 保持 FP32);
+# TensorRT 10 仍用原 FP32 ONNX + --fp16 (与一期一致)。两份都备好, 由 bench_trtexec.sh 按 TRT 版本选。
+if [ ! -f yolov8s.fp16.onnx ]; then
+  [ -f datasets/autocast_calib.npz ] || qrun "$QIMG" python -c \
+    "import numpy as np; a=np.load('$CALIB', mmap_mode='r'); np.savez('datasets/autocast_calib.npz', images=np.ascontiguousarray(a[:16]))"
+  qrun "$QIMG" python -m modelopt.onnx.autocast --onnx_path=yolov8s.onnx --output_path=yolov8s.fp16.onnx \
+    --low_precision_type=fp16 --keep_io_types --calibration_data=datasets/autocast_calib.npz \
+    2>&1 | tee "$OUT/autocast-fp16.log"
+  [ -f yolov8s.fp16.onnx ] || { echo "AutoCast 失败, 见 $OUT/autocast-fp16.log"; exit 1; }
+fi
 for v in $VARIANTS; do
-  [ "$v" = fp16 ] && continue
-  [ -f "yolov8s.${v}.onnx" ] && { echo "  已存在 yolov8s.${v}.onnx"; continue; }
-  mode="${v%%-*}"                                          # fp8-nohead -> fp8
+  q="${v//-opt5/}"                                         # 构建标签不影响 ONNX
+  [ "${q%%-*}" = fp16 ] && continue
+  [ -f "yolov8s.${q}.onnx" ] && { echo "  已存在 yolov8s.${q}.onnx"; continue; }
+  mode="${q%%-*}"                                          # fp8-nohead -> fp8
   # FP8 用 max (E4M3 动态范围大, NVIDIA 推荐); INT8 用 entropy (TensorRT 经典 CNN 口径)
   if [ "$mode" = fp8 ]; then method="${FP8_CALIB:-max}"; else method="${INT8_CALIB:-entropy}"; fi
-  extra=(); [[ "$v" == *-nohead ]] && extra=(--nodes_to_exclude '/model\.22/.*')
-  echo "  [$v] quantize_mode=$mode calibration_method=$method ${extra[*]}"
+  extra=()
+  [[ "$q" == *-nohead* ]] && extra+=(--nodes_to_exclude '/model\.22/.*')
+  [[ "$q" == *-conv* ]] && extra+=(--op_types_to_quantize Conv)
+  echo "  [$q] quantize_mode=$mode calibration_method=$method ${extra[*]}"
   qrun "$QIMG" python -m modelopt.onnx.quantization \
     --onnx_path=yolov8s.onnx --quantize_mode="$mode" \
     --calibration_data_path="$CALIB" --calibration_method="$method" \
-    --calibration_eps cpu --output_path="yolov8s.${v}.onnx" "${extra[@]}" \
-    2>&1 | tee "$OUT/quant-${v}.log"
-  [ -f "yolov8s.${v}.onnx" ] || { echo "[$v] 量化失败, 见 $OUT/quant-${v}.log"; exit 1; }
+    --calibration_eps cpu --output_path="yolov8s.${q}.onnx" "${extra[@]}" \
+    2>&1 | tee "$OUT/quant-${q}.log"
+  [ -f "yolov8s.${q}.onnx" ] || { echo "[$q] 量化失败, 见 $OUT/quant-${q}.log"; exit 1; }
 done
 
 echo "[4/7] 建引擎 + trtexec 两层测速 + 逐层 profile"

@@ -16,7 +16,9 @@ ONNX_TO_TRITON = {onnx.TensorProto.FLOAT: "TYPE_FP32", onnx.TensorProto.FLOAT16:
 
 
 def onnx_for(variant):
-    return "yolov8s.onnx" if variant == "fp16" else f"yolov8s.{variant}.onnx"
+    q = variant.replace("-opt5", "")                  # 构建标签不影响 ONNX
+    # fp16 的 I/O 类型: 原 ONNX 与 AutoCast(--keep_io_types) 产物一致, 都是 FP32
+    return "yolov8s.onnx" if q.split("-")[0] == "fp16" else f"yolov8s.{q}.onnx"
 
 
 def io_types(path):

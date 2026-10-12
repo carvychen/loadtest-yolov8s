@@ -93,6 +93,8 @@ SKIP_SWEEP=1 bash run_quant.sh rtx6000-quarter-nc24      # 只要 mAP + trtexec,
 | 逐层归因 | `trtexec --dumpProfile --exportLayerInfo` | 低精度卷积占比（量化覆盖率）、reformat / 未融合 Q/DQ 的时间占比 |
 
 数据集与中间产物（`datasets/`、`*.npy`、`*.onnx`、`*.plan`、日志）不入库；`results/quant/` 下的 CSV / JSON / summary.md 入库。
+变体名 = `<精度>[-标签]`：`nohead`（检测头不量化）、`conv`（只量化 Conv）改量化方案；`opt5`（`--builderOptimizationLevel=5`）只改构建参数。
+脚本自动识别 TensorRT 10 / 11：TRT 11 已移除弱类型（没有 `--fp16`），FP16 基线改用 ModelOpt AutoCast 生成的 FP16 ONNX。换 TRT 版本时请换 label，避免覆盖结果，例如 `TRITON_TAG=26.09 bash run_quant.sh rtx6000-quarter-nc24-trt11`。
 可调：`VARIANTS`、`BATCHES`（默认 `1 8 32`）、`PROFILE_BATCH`（8）、`DURATION`（每测点秒数，15）、`FP8_CALIB` / `INT8_CALIB`、`TRITON_TAG`（换更新的 TensorRT 版本对比 FP8 kernel 覆盖）。
 
 ## 跑完清理（省钱）
