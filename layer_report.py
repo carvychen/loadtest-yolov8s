@@ -23,9 +23,11 @@ def kind_of(layer):
     name, ltype = layer.get("Name", ""), layer.get("LayerType", "")
     if ltype == "Reformat" or "reformat" in name.lower():
         return "reformat"
-    if re.search(r"QuantizeLinear|DequantizeLinear", name) and "conv" not in ltype.lower():
+    # Myelin 编译的层 (FP8 stronglyTyped 常见, 名如 /model_1/conv/Conv_myl0_4) LayerType 不叫 Conv, 要看名字
+    is_conv = "conv" in ltype.lower() or "Conv" in name
+    if re.search(r"QuantizeLinear|DequantizeLinear", name) and not is_conv:
         return "qdq_unfused"
-    if "conv" in ltype.lower():
+    if is_conv:
         return "conv"
     if "myelin" in ltype.lower() or ltype == "ForeignNode":
         return "myelin"

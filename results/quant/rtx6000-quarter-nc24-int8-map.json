@@ -1,0 +1,8 @@
+{
+  "model": "yolov8s_int8",
+  "n_images": 4500,
+  "n_dets": 622245,
+  "mAP50_95": 0.4417,
+  "mAP50": 0.6136,
+  "seconds": 85.7
+}
