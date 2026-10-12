@@ -4,6 +4,7 @@
 #   -> Triton 上测 mAP -> perf_analyzer 并发扫描 -> results/quant/<label>-summary.md
 # 前置: 已跑过 setup.sh (有 yolov8s.onnx 和 Triton 镜像)。FP8 需 sm89+ (Ada/Hopper/Blackwell), 在 RTX PRO 6000 上跑。
 set -euo pipefail
+trap 'echo "!! run_quant.sh 第 $LINENO 行失败 (退出码 $?), 往上翻看具体报错; 各步骤日志在 results/quant/*.log"' ERR
 
 LABEL="${1:?用法: bash run_quant.sh <gpu-label>   例如 rtx6000-quarter-nc24}"
 TAG="${TRITON_TAG:-25.08}"
