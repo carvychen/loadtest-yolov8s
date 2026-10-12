@@ -22,19 +22,21 @@ LABEL="${1:?need <gpu-label>}"
 CONCURRENCY="${CONCURRENCY:-1:32:1}"      # 起:止:步长
 REQUESTS="${REQUESTS:-2500}"              # 每档计入统计的请求数 (决定 p99 样本量与单档内存; 默认取全机型都安全的值)
 WARMUP="${WARMUP:-1000}"                  # 每档预热请求数 (只跑不计入, 剔除冷启动)
-mkdir -p results
+MODEL="${MODEL:-yolov8s}"                 # Triton 模型名 (量化实验: yolov8s_fp16 / _fp8 / _int8)
+OUTDIR="${OUTDIR:-results}"               # 量化实验写 results/quant, 不混进一期 analyze.py 的输入
+mkdir -p "$OUTDIR"
 
 IFS=: read -r START END STEP <<< "$CONCURRENCY"
 STEP="${STEP:-1}"
 
-OUT="results/${LABEL}.csv"
-TMP="results/.${LABEL}.tmp.csv"
+OUT="$OUTDIR/${LABEL}.csv"
+TMP="$OUTDIR/.${LABEL}.tmp.csv"
 : > "$OUT"
 
 for c in $(seq "$START" "$STEP" "$END"); do
   echo "== concurrency $c  (warmup $WARMUP + measure $REQUESTS) =="
   if ! perf_analyzer \
-        -m yolov8s \
+        -m "$MODEL" \
         -u localhost:8001 -i grpc \
         --concurrency-range "${c}:${c}:1" \
         --warmup-request-count "$WARMUP" \

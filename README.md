@@ -73,6 +73,28 @@ CONCURRENCY=1:32:1 REQUESTS=8000 WARMUP=1000 bash run.sh a10
 
 > 之前按 7.4 MB/请求估算是错的：gRPC 双副本让**实际约 12 MB/请求**。5000 请求（+1000 预热）× 12 MB ≈ 70 GB 正好吃满 NC24（`free -h` 显示 available 只剩 50 Mi），这就是撞墙点；降到 2500 峰值 ~42 GB，留足余量，p99 尾部仍有 ~25 个样本，够用。跑之前 `watch -n0.1 free -h` 盯着最稳。
 
+## 二期 · FP8 / INT8 量化实测（RTX PRO 6000）
+
+背景：客户自行量化后在 L4 上测得 FP8 相比 FP16 提升不足 50%。我们自建量化 + 精度评测，实测真实提升，并定位瓶颈。FP8 需 sm89+（Ada / Hopper / Blackwell），T4、A10 不支持，所以在 RTX PRO 6000 上做。
+
+```bash
+bash setup.sh                                   # 一期已跑过可跳过
+bash run_quant.sh rtx6000-quarter-nc24          # 一条命令跑完, 结果在 results/quant/<label>-summary.md
+VARIANTS="fp16 fp8 int8 fp8-nohead int8-nohead" bash run_quant.sh rtx6000-quarter-nc24   # 加检测头不量化的消融
+SKIP_SWEEP=1 bash run_quant.sh rtx6000-quarter-nc24      # 只要 mAP + trtexec, 跳过 perf_analyzer 扫描
+```
+
+| 步骤 | 做什么 | 口径 |
+|---|---|---|
+| 量化 | NVIDIA ModelOpt 0.47 ONNX PTQ，输出显式 Q/DQ ONNX | 校准 500 张 COCO val2017（每 10 张取 1），FP8 用 max、INT8 用 entropy；CPU 校准，产物与 GPU 无关 |
+| 建引擎 | FP16：原 ONNX + `--fp16`（与一期一致）；FP8/INT8：Q/DQ ONNX + `--stronglyTyped` | 同一 Triton 镜像内的 trtexec，动态 batch 1/8/32 |
+| 精度 | Triton 上的真实引擎跑 COCO mAP50-95 | 评测 4500 张，与校准集不重叠；后处理对齐 Ultralytics（conf 0.001 / iou 0.7 / multi-label） |
+| 三层测速 | ① GPU 纯计算（`--noDataTransfers` + CUDA Graph）② 含 PCIe 传输 ③ Triton + perf_analyzer QPS@SLA | 加速比在哪一层掉下来，瓶颈就在哪一层 |
+| 逐层归因 | `trtexec --dumpProfile --exportLayerInfo` | 低精度卷积占比（量化覆盖率）、reformat / 未融合 Q/DQ 的时间占比 |
+
+数据集与中间产物（`datasets/`、`*.npy`、`*.onnx`、`*.plan`、日志）不入库；`results/quant/` 下的 CSV / JSON / summary.md 入库。
+可调：`VARIANTS`、`BATCHES`（默认 `1 8 32`）、`PROFILE_BATCH`（8）、`DURATION`（每测点秒数，15）、`FP8_CALIB` / `INT8_CALIB`、`TRITON_TAG`（换更新的 TensorRT 版本对比 FP8 kernel 覆盖）。
+
 ## 跑完清理（省钱）
 
 ```bash

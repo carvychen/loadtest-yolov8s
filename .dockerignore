@@ -1,0 +1,2 @@
+# Dockerfile.quant 不 COPY 任何文件; 排除全部, 避免把 datasets/ (COCO+校准集 3GB+) 和 ONNX 传进 build context
+*
