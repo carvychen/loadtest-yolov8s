@@ -1,0 +1,4 @@
+label=rtx6000-quarter-nc24-trt11-refactor
+NVIDIA RTX Pro 6000 Blackwell DC-1-24Q, 595.58.03, [Insufficient Permissions]
+TensorRT v110300
+TensorRT version: 11.3.0

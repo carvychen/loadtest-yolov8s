@@ -1,0 +1,8 @@
+{
+  "model": "yolov8s_fp16",
+  "n_images": 4500,
+  "n_dets": 648380,
+  "mAP50_95": 0.4516,
+  "mAP50": 0.6189,
+  "seconds": 100.1
+}

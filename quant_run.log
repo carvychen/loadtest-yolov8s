@@ -1,0 +1,2911 @@
+[1/7] 量化/评测镜像 yolo-quant:modelopt-0.47.0
+[2/7] COCO val2017 + 校准集 (500 张, 与 4500 张评测集不重叠)
+已存在 datasets/coco/val2017, 跳过
+已存在 datasets/coco/annotations/instances_val2017.json, 跳过
+COCO val2017 就绪: 5000 张 + datasets/coco/annotations/instances_val2017.json
+[3/7] ModelOpt 量化 -> yolov8s.<variant>.onnx (Q/DQ ONNX 与 GPU 无关, 已存在则跳过)
+  已存在 yolov8s.fp8.onnx
+  已存在 yolov8s.int8.onnx
+[4/7] 建引擎 + trtexec 两层测速 + 逐层 profile
+model_repository_q/yolov8s_fp16: input TYPE_FP32, output TYPE_FP32
+model_repository_q/yolov8s_fp8: input TYPE_FP32, output TYPE_FP32
+model_repository_q/yolov8s_int8: input TYPE_FP32, output TYPE_FP32
+
+=============================
+== Triton Inference Server ==
+=============================
+
+NVIDIA Release 25.08 (build 202022639)
+Triton Server Version 2.60.0
+
+Copyright (c) 2018-2025, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+and the Product-Specific Terms for NVIDIA AI Products
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+
+== [fp16] 构建引擎 (yolov8s.onnx --fp16) ==
+== [fp16] 引擎已生成 (26M), 开始测速 ==
+fp16,1,compute,858.063,858.1,,
+fp16,1,transfer,858.045,858.0,,
+fp16,8,compute,159.336,1274.7,,
+fp16,8,transfer,156.113,1248.9,,
+fp16,32,compute,37.7459,1207.9,,
+fp16,32,transfer,36.796,1177.5,,
+== [fp16] 逐层 profile (batch 8) ==
+== [fp8] 构建引擎 (yolov8s.fp8.onnx --stronglyTyped) ==
+== [fp8] 引擎已生成 (13M), 开始测速 ==
+fp8,1,compute,1071.29,1071.3,,
+fp8,1,transfer,1070.92,1070.9,,
+fp8,8,compute,219.674,1757.4,,
+fp8,8,transfer,213.381,1707.0,,
+fp8,32,compute,46.823,1498.3,,
+fp8,32,transfer,45.5134,1456.4,,
+== [fp8] 逐层 profile (batch 8) ==
+== [int8] 构建引擎 (yolov8s.int8.onnx --stronglyTyped) ==
+== [int8] 引擎已生成 (14M), 开始测速 ==
+int8,1,compute,1373.23,1373.2,,
+int8,1,transfer,1379.5,1379.5,,
+int8,8,compute,298.672,2389.4,,
+int8,8,transfer,294.615,2356.9,,
+int8,32,compute,66.9872,2143.6,,
+int8,32,transfer,65.0552,2081.8,,
+== [int8] 逐层 profile (batch 8) ==
+trtexec 完成 -> results/quant/rtx6000-quarter-nc24-trtexec.csv
+[5/7] 启动 Triton (加载全部精度变体)
+      等待 READY. ✓
+[6/7] COCO mAP (每个变体 4500 张)
+  yolov8s_fp16: 8/4500
+  yolov8s_fp16: 408/4500
+  yolov8s_fp16: 808/4500
+  yolov8s_fp16: 1208/4500
+  yolov8s_fp16: 1608/4500
+  yolov8s_fp16: 2008/4500
+  yolov8s_fp16: 2408/4500
+  yolov8s_fp16: 2808/4500
+  yolov8s_fp16: 3208/4500
+  yolov8s_fp16: 3608/4500
+  yolov8s_fp16: 4008/4500
+  yolov8s_fp16: 4408/4500
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.04s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=22.58s).
+Accumulating evaluation results...
+DONE (t=5.20s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.452
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.619
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.490
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.260
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.499
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.608
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.357
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.593
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.648
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.440
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.712
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.792
+{"model": "yolov8s_fp16", "n_images": 4500, "n_dets": 648456, "mAP50_95": 0.4515, "mAP50": 0.6187, "seconds": 89.1}
+  yolov8s_fp8: 8/4500
+  yolov8s_fp8: 408/4500
+  yolov8s_fp8: 808/4500
+  yolov8s_fp8: 1208/4500
+  yolov8s_fp8: 1608/4500
+  yolov8s_fp8: 2008/4500
+  yolov8s_fp8: 2408/4500
+  yolov8s_fp8: 2808/4500
+  yolov8s_fp8: 3208/4500
+  yolov8s_fp8: 3608/4500
+  yolov8s_fp8: 4008/4500
+  yolov8s_fp8: 4408/4500
+loading annotations into memory...
+Done (t=0.27s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.35s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=23.39s).
+Accumulating evaluation results...
+DONE (t=5.18s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.447
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.616
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.486
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.254
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.492
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.607
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.354
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.590
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.643
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.434
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.707
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.791
+{"model": "yolov8s_fp8", "n_images": 4500, "n_dets": 638292, "mAP50_95": 0.4468, "mAP50": 0.6159, "seconds": 86.3}
+  yolov8s_int8: 8/4500
+  yolov8s_int8: 408/4500
+  yolov8s_int8: 808/4500
+  yolov8s_int8: 1208/4500
+  yolov8s_int8: 1608/4500
+  yolov8s_int8: 2008/4500
+  yolov8s_int8: 2408/4500
+  yolov8s_int8: 2808/4500
+  yolov8s_int8: 3208/4500
+  yolov8s_int8: 3608/4500
+  yolov8s_int8: 4008/4500
+  yolov8s_int8: 4408/4500
+loading annotations into memory...
+Done (t=0.28s)
+creating index...
+index created!
+Loading and preparing results...
+DONE (t=1.27s)
+creating index...
+index created!
+Running per image evaluation...
+Evaluate annotation type *bbox*
+DONE (t=22.65s).
+Accumulating evaluation results...
+DONE (t=5.06s).
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.442
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.614
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.482
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.249
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.490
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.598
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.350
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.586
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.639
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.430
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.702
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.796
+{"model": "yolov8s_int8", "n_images": 4500, "n_dets": 622245, "mAP50_95": 0.4417, "mAP50": 0.6136, "seconds": 85.7}
+[7/7] perf_analyzer 并发扫描 (与一期同口径: 1→32, p99 SLA)
+
+=================================
+== Triton Inference Server SDK ==
+=================================
+
+NVIDIA Release 25.08 (build 202022643)
+
+Copyright (c) 2018-2025, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+and the Product-Specific Terms for NVIDIA AI Products
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+
+WARNING: The NVIDIA Driver was not detected.  GPU functionality will not be available.
+   Use the NVIDIA Container Toolkit to start this container with GPU support; see
+   https://docs.nvidia.com/datacenter/cloud-native/ .
+
+== concurrency 1  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Using synchronous calls for inference
+
+Request concurrency: 1
+Request concurrency: 1
+  Client: 
+    Request count: 2500
+    Throughput: 89.2217 infer/sec
+    p50 latency: 6968 usec
+    p90 latency: 7313 usec
+    p95 latency: 7477 usec
+    p99 latency: 8304 usec
+    Avg gRPC time: 7000 usec ((un)marshal request/response 249 usec + response wait 6751 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2500
+    Successful request count: 2500
+    Avg request latency: 4500 usec (overhead 621 usec + queue 241 usec + compute input 1570 usec + compute infer 1273 usec + compute output 793 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 1, throughput: 89.2217 infer/sec, latency 8304 usec
+== concurrency 2  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 2 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 2
+Request concurrency: 2
+  Client: 
+    Request count: 2500
+    Throughput: 166.328 infer/sec
+    p50 latency: 7352 usec
+    p90 latency: 8732 usec
+    p95 latency: 9243 usec
+    p99 latency: 10838 usec
+    Avg gRPC time: 7510 usec ((un)marshal request/response 288 usec + response wait 7222 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2493
+    Successful request count: 2500
+    Avg request latency: 4367 usec (overhead 784 usec + queue 329 usec + compute input 1282 usec + compute infer 1286 usec + compute output 684 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 2, throughput: 166.328 infer/sec, latency 10838 usec
+== concurrency 3  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 3 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 3
+Request concurrency: 3
+  Client: 
+    Request count: 2500
+    Throughput: 191.754 infer/sec
+    p50 latency: 9655 usec
+    p90 latency: 12142 usec
+    p95 latency: 13177 usec
+    p99 latency: 15304 usec
+    Avg gRPC time: 9947 usec ((un)marshal request/response 595 usec + response wait 9352 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2433
+    Successful request count: 2500
+    Avg request latency: 5126 usec (overhead 1032 usec + queue 541 usec + compute input 1342 usec + compute infer 1334 usec + compute output 877 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 3, throughput: 191.754 infer/sec, latency 15304 usec
+== concurrency 4  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 4 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 4
+Request concurrency: 4
+  Client: 
+    Request count: 2500
+    Throughput: 207.519 infer/sec
+    p50 latency: 11085 usec
+    p90 latency: 14634 usec
+    p95 latency: 15914 usec
+    p99 latency: 18501 usec
+    Avg gRPC time: 11524 usec ((un)marshal request/response 714 usec + response wait 10810 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2385
+    Successful request count: 2500
+    Avg request latency: 5666 usec (overhead 1156 usec + queue 765 usec + compute input 1420 usec + compute infer 1388 usec + compute output 935 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 4, throughput: 207.519 infer/sec, latency 18501 usec
+== concurrency 5  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 5 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 5
+Request concurrency: 5
+  Client: 
+    Request count: 2500
+    Throughput: 226.775 infer/sec
+    p50 latency: 13316 usec
+    p90 latency: 18154 usec
+    p95 latency: 19849 usec
+    p99 latency: 23705 usec
+    Avg gRPC time: 13847 usec ((un)marshal request/response 736 usec + response wait 13111 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2263
+    Successful request count: 2500
+    Avg request latency: 6697 usec (overhead 1308 usec + queue 1172 usec + compute input 1681 usec + compute infer 1545 usec + compute output 989 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 5, throughput: 226.775 infer/sec, latency 23705 usec
+== concurrency 6  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 6 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 6
+Request concurrency: 6
+  Client: 
+    Request count: 2500
+    Throughput: 248.734 infer/sec
+    p50 latency: 13952 usec
+    p90 latency: 19288 usec
+    p95 latency: 21337 usec
+    p99 latency: 24714 usec
+    Avg gRPC time: 14483 usec ((un)marshal request/response 719 usec + response wait 13764 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2198
+    Successful request count: 2500
+    Avg request latency: 7402 usec (overhead 1470 usec + queue 1567 usec + compute input 1555 usec + compute infer 1612 usec + compute output 1197 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 6, throughput: 248.734 infer/sec, latency 24714 usec
+== concurrency 7  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 7 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 7
+Request concurrency: 7
+  Client: 
+    Request count: 2500
+    Throughput: 276.085 infer/sec
+    p50 latency: 15472 usec
+    p90 latency: 21869 usec
+    p95 latency: 23847 usec
+    p99 latency: 28762 usec
+    Avg gRPC time: 16127 usec ((un)marshal request/response 758 usec + response wait 15369 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2050
+    Successful request count: 2500
+    Avg request latency: 9045 usec (overhead 1797 usec + queue 2268 usec + compute input 1832 usec + compute infer 1748 usec + compute output 1398 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 7, throughput: 276.085 infer/sec, latency 28762 usec
+== concurrency 8  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 8 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 8
+Request concurrency: 8
+  Client: 
+    Request count: 2500
+    Throughput: 309.944 infer/sec
+    p50 latency: 16304 usec
+    p90 latency: 22925 usec
+    p95 latency: 25142 usec
+    p99 latency: 30266 usec
+    Avg gRPC time: 16942 usec ((un)marshal request/response 775 usec + response wait 16167 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1966
+    Successful request count: 2500
+    Avg request latency: 9270 usec (overhead 1940 usec + queue 2403 usec + compute input 1607 usec + compute infer 1801 usec + compute output 1519 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 8, throughput: 309.944 infer/sec, latency 30266 usec
+== concurrency 9  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 9 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 9
+Request concurrency: 9
+  Client: 
+    Request count: 2500
+    Throughput: 275.903 infer/sec
+    p50 latency: 20836 usec
+    p90 latency: 30075 usec
+    p95 latency: 32605 usec
+    p99 latency: 38023 usec
+    Avg gRPC time: 21459 usec ((un)marshal request/response 801 usec + response wait 20658 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1588
+    Successful request count: 2500
+    Avg request latency: 14157 usec (overhead 2646 usec + queue 4260 usec + compute input 2886 usec + compute infer 2218 usec + compute output 2146 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 9, throughput: 275.903 infer/sec, latency 38023 usec
+== concurrency 10  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 10 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 10
+Request concurrency: 10
+  Client: 
+    Request count: 2500
+    Throughput: 309.581 infer/sec
+    p50 latency: 22145 usec
+    p90 latency: 32130 usec
+    p95 latency: 34536 usec
+    p99 latency: 40964 usec
+    Avg gRPC time: 22962 usec ((un)marshal request/response 812 usec + response wait 22150 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1454
+    Successful request count: 2500
+    Avg request latency: 15419 usec (overhead 2925 usec + queue 4615 usec + compute input 3062 usec + compute infer 2355 usec + compute output 2461 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 10, throughput: 309.581 infer/sec, latency 40964 usec
+== concurrency 11  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 11 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 11
+Request concurrency: 11
+  Client: 
+    Request count: 2500
+    Throughput: 276.335 infer/sec
+    p50 latency: 28471 usec
+    p90 latency: 36462 usec
+    p95 latency: 38634 usec
+    p99 latency: 43875 usec
+    Avg gRPC time: 27930 usec ((un)marshal request/response 817 usec + response wait 27113 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1107
+    Successful request count: 2500
+    Avg request latency: 21033 usec (overhead 4120 usec + queue 5879 usec + compute input 4697 usec + compute infer 2989 usec + compute output 3347 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 11, throughput: 276.335 infer/sec, latency 43875 usec
+== concurrency 12  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 12 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 12
+Request concurrency: 12
+  Client: 
+    Request count: 2500
+    Throughput: 276.062 infer/sec
+    p50 latency: 31252 usec
+    p90 latency: 39305 usec
+    p95 latency: 41786 usec
+    p99 latency: 47334 usec
+    Avg gRPC time: 30747 usec ((un)marshal request/response 819 usec + response wait 29928 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 943
+    Successful request count: 2500
+    Avg request latency: 24319 usec (overhead 4814 usec + queue 6702 usec + compute input 5577 usec + compute infer 3316 usec + compute output 3909 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 12, throughput: 276.062 infer/sec, latency 47334 usec
+== concurrency 13  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 13 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 13
+Request concurrency: 13
+  Client: 
+    Request count: 2500
+    Throughput: 310.323 infer/sec
+    p50 latency: 32606 usec
+    p90 latency: 40927 usec
+    p95 latency: 44424 usec
+    p99 latency: 50955 usec
+    Avg gRPC time: 32339 usec ((un)marshal request/response 825 usec + response wait 31514 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 842
+    Successful request count: 2500
+    Avg request latency: 26128 usec (overhead 5370 usec + queue 7289 usec + compute input 5318 usec + compute infer 3546 usec + compute output 4605 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 13, throughput: 310.323 infer/sec, latency 50955 usec
+== concurrency 14  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 14 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 14
+Request concurrency: 14
+  Client: 
+    Request count: 2500
+    Throughput: 310.489 infer/sec
+    p50 latency: 36402 usec
+    p90 latency: 44882 usec
+    p95 latency: 47818 usec
+    p99 latency: 55387 usec
+    Avg gRPC time: 36319 usec ((un)marshal request/response 814 usec + response wait 35505 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 726
+    Successful request count: 2500
+    Avg request latency: 30558 usec (overhead 6020 usec + queue 8660 usec + compute input 6888 usec + compute infer 3817 usec + compute output 5171 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 14, throughput: 310.489 infer/sec, latency 55387 usec
+== concurrency 15  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 15 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 15
+Request concurrency: 15
+  Client: 
+    Request count: 2500
+    Throughput: 311.381 infer/sec
+    p50 latency: 38401 usec
+    p90 latency: 50475 usec
+    p95 latency: 54109 usec
+    p99 latency: 61792 usec
+    Avg gRPC time: 39135 usec ((un)marshal request/response 816 usec + response wait 38319 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 656
+    Successful request count: 2500
+    Avg request latency: 33554 usec (overhead 6936 usec + queue 8859 usec + compute input 8027 usec + compute infer 4262 usec + compute output 5469 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 15, throughput: 311.381 infer/sec, latency 61792 usec
+== concurrency 16  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 16 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 16
+Request concurrency: 16
+  Client: 
+    Request count: 2500
+    Throughput: 310.585 infer/sec
+    p50 latency: 39614 usec
+    p90 latency: 51719 usec
+    p95 latency: 55059 usec
+    p99 latency: 62872 usec
+    Avg gRPC time: 40383 usec ((un)marshal request/response 814 usec + response wait 39569 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 603
+    Successful request count: 2500
+    Avg request latency: 34986 usec (overhead 7147 usec + queue 9322 usec + compute input 8010 usec + compute infer 4434 usec + compute output 6071 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 16, throughput: 310.585 infer/sec, latency 62872 usec
+== concurrency 17  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 17 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 17
+Request concurrency: 17
+  Client: 
+    Request count: 2500
+    Throughput: 354.902 infer/sec
+    p50 latency: 37448 usec
+    p90 latency: 50226 usec
+    p95 latency: 53121 usec
+    p99 latency: 60984 usec
+    Avg gRPC time: 38443 usec ((un)marshal request/response 830 usec + response wait 37613 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 605
+    Successful request count: 2500
+    Avg request latency: 32469 usec (overhead 7131 usec + queue 8782 usec + compute input 5872 usec + compute infer 4463 usec + compute output 6220 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 17, throughput: 354.902 infer/sec, latency 60984 usec
+== concurrency 18  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 18 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 18
+Request concurrency: 18
+  Client: 
+    Request count: 2500
+    Throughput: 354.985 infer/sec
+    p50 latency: 40522 usec
+    p90 latency: 52469 usec
+    p95 latency: 55826 usec
+    p99 latency: 65828 usec
+    Avg gRPC time: 41170 usec ((un)marshal request/response 842 usec + response wait 40328 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 547
+    Successful request count: 2500
+    Avg request latency: 35631 usec (overhead 8005 usec + queue 9450 usec + compute input 6917 usec + compute infer 4896 usec + compute output 6362 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 18, throughput: 354.985 infer/sec, latency 65828 usec
+== concurrency 19  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 19 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 19
+Request concurrency: 19
+  Client: 
+    Request count: 2500
+    Throughput: 354.802 infer/sec
+    p50 latency: 44423 usec
+    p90 latency: 56234 usec
+    p95 latency: 59517 usec
+    p99 latency: 66246 usec
+    Avg gRPC time: 44138 usec ((un)marshal request/response 831 usec + response wait 43307 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 510
+    Successful request count: 2500
+    Avg request latency: 39216 usec (overhead 8604 usec + queue 9985 usec + compute input 7125 usec + compute infer 5278 usec + compute output 8224 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 19, throughput: 354.802 infer/sec, latency 66246 usec
+== concurrency 20  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 20 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 20
+Request concurrency: 20
+  Client: 
+    Request count: 2500
+    Throughput: 354.046 infer/sec
+    p50 latency: 47168 usec
+    p90 latency: 59294 usec
+    p95 latency: 63064 usec
+    p99 latency: 70227 usec
+    Avg gRPC time: 47190 usec ((un)marshal request/response 845 usec + response wait 46345 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 459
+    Successful request count: 2500
+    Avg request latency: 42587 usec (overhead 9394 usec + queue 10978 usec + compute input 7677 usec + compute infer 5584 usec + compute output 8952 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 20, throughput: 354.046 infer/sec, latency 70227 usec
+== concurrency 21  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 21 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 21
+Request concurrency: 21
+  Client: 
+    Request count: 2500
+    Throughput: 355.376 infer/sec
+    p50 latency: 49040 usec
+    p90 latency: 60511 usec
+    p95 latency: 63896 usec
+    p99 latency: 71167 usec
+    Avg gRPC time: 48821 usec ((un)marshal request/response 834 usec + response wait 47987 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 425
+    Successful request count: 2500
+    Avg request latency: 44613 usec (overhead 9829 usec + queue 11184 usec + compute input 7821 usec + compute infer 5999 usec + compute output 9779 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 21, throughput: 355.376 infer/sec, latency 71167 usec
+== concurrency 22  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 22 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 22
+Request concurrency: 22
+  Client: 
+    Request count: 2500
+    Throughput: 310.948 infer/sec
+    p50 latency: 56761 usec
+    p90 latency: 66027 usec
+    p95 latency: 69178 usec
+    p99 latency: 78806 usec
+    Avg gRPC time: 56002 usec ((un)marshal request/response 821 usec + response wait 55181 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 373
+    Successful request count: 2500
+    Avg request latency: 52721 usec (overhead 11278 usec + queue 13292 usec + compute input 11454 usec + compute infer 6715 usec + compute output 9981 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 22, throughput: 310.948 infer/sec, latency 78806 usec
+== concurrency 23  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 23 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 23
+Request concurrency: 23
+  Client: 
+    Request count: 2500
+    Throughput: 310.323 infer/sec
+    p50 latency: 59096 usec
+    p90 latency: 68571 usec
+    p95 latency: 71744 usec
+    p99 latency: 83050 usec
+    Avg gRPC time: 58933 usec ((un)marshal request/response 831 usec + response wait 58102 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 355
+    Successful request count: 2500
+    Avg request latency: 55779 usec (overhead 11601 usec + queue 14427 usec + compute input 12262 usec + compute infer 6993 usec + compute output 10495 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 23, throughput: 310.323 infer/sec, latency 83050 usec
+== concurrency 24  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 24 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 24
+Request concurrency: 24
+  Client: 
+    Request count: 2500
+    Throughput: 354.435 infer/sec
+    p50 latency: 59187 usec
+    p90 latency: 68068 usec
+    p95 latency: 72181 usec
+    p99 latency: 81449 usec
+    Avg gRPC time: 58975 usec ((un)marshal request/response 836 usec + response wait 58139 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 337
+    Successful request count: 2500
+    Avg request latency: 55469 usec (overhead 11670 usec + queue 14187 usec + compute input 12067 usec + compute infer 6930 usec + compute output 10614 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 24, throughput: 354.435 infer/sec, latency 81449 usec
+== concurrency 25  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 25 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 25
+Request concurrency: 25
+  Client: 
+    Request count: 2500
+    Throughput: 353.917 infer/sec
+    p50 latency: 56350 usec
+    p90 latency: 65731 usec
+    p95 latency: 69412 usec
+    p99 latency: 76186 usec
+    Avg gRPC time: 56572 usec ((un)marshal request/response 844 usec + response wait 55728 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 334
+    Successful request count: 2500
+    Avg request latency: 52857 usec (overhead 11246 usec + queue 14043 usec + compute input 10093 usec + compute infer 6843 usec + compute output 10632 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 25, throughput: 353.917 infer/sec, latency 76186 usec
+== concurrency 26  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 26 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 26
+Request concurrency: 26
+  Client: 
+    Request count: 2500
+    Throughput: 411.253 infer/sec
+    p50 latency: 53909 usec
+    p90 latency: 63649 usec
+    p95 latency: 67024 usec
+    p99 latency: 75800 usec
+    Avg gRPC time: 53874 usec ((un)marshal request/response 836 usec + response wait 53038 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 328
+    Successful request count: 2500
+    Avg request latency: 50012 usec (overhead 10810 usec + queue 13870 usec + compute input 9282 usec + compute infer 6875 usec + compute output 9174 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 26, throughput: 411.253 infer/sec, latency 75800 usec
+== concurrency 27  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 27 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 27
+Request concurrency: 27
+  Client: 
+    Request count: 2500
+    Throughput: 354.169 infer/sec
+    p50 latency: 56589 usec
+    p90 latency: 67426 usec
+    p95 latency: 70572 usec
+    p99 latency: 77064 usec
+    Avg gRPC time: 56924 usec ((un)marshal request/response 832 usec + response wait 56092 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 310
+    Successful request count: 2500
+    Avg request latency: 53511 usec (overhead 11663 usec + queue 14498 usec + compute input 10009 usec + compute infer 7184 usec + compute output 10155 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 27, throughput: 354.169 infer/sec, latency 77064 usec
+== concurrency 28  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 28 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 28
+Request concurrency: 28
+  Client: 
+    Request count: 2500
+    Throughput: 414.009 infer/sec
+    p50 latency: 55662 usec
+    p90 latency: 65998 usec
+    p95 latency: 69047 usec
+    p99 latency: 75636 usec
+    Avg gRPC time: 56297 usec ((un)marshal request/response 836 usec + response wait 55461 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 299
+    Successful request count: 2500
+    Avg request latency: 52750 usec (overhead 11716 usec + queue 13753 usec + compute input 10268 usec + compute infer 7287 usec + compute output 9724 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 28, throughput: 414.009 infer/sec, latency 75636 usec
+== concurrency 29  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 29 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 29
+Request concurrency: 29
+  Client: 
+    Request count: 2500
+    Throughput: 413.917 infer/sec
+    p50 latency: 56688 usec
+    p90 latency: 66277 usec
+    p95 latency: 69126 usec
+    p99 latency: 75984 usec
+    Avg gRPC time: 57026 usec ((un)marshal request/response 839 usec + response wait 56187 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 283
+    Successful request count: 2500
+    Avg request latency: 53462 usec (overhead 11881 usec + queue 13621 usec + compute input 10551 usec + compute infer 7576 usec + compute output 9832 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 29, throughput: 413.917 infer/sec, latency 75984 usec
+== concurrency 30  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 30 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 30
+Request concurrency: 30
+  Client: 
+    Request count: 2500
+    Throughput: 413.713 infer/sec
+    p50 latency: 57030 usec
+    p90 latency: 65822 usec
+    p95 latency: 69099 usec
+    p99 latency: 75237 usec
+    Avg gRPC time: 57561 usec ((un)marshal request/response 824 usec + response wait 56737 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 272
+    Successful request count: 2500
+    Avg request latency: 54638 usec (overhead 12362 usec + queue 13381 usec + compute input 11329 usec + compute infer 7811 usec + compute output 9754 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 30, throughput: 413.713 infer/sec, latency 75237 usec
+== concurrency 31  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 31 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 31
+Request concurrency: 31
+  Client: 
+    Request count: 2500
+    Throughput: 414.109 infer/sec
+    p50 latency: 60033 usec
+    p90 latency: 69706 usec
+    p95 latency: 72989 usec
+    p99 latency: 78995 usec
+    Avg gRPC time: 59978 usec ((un)marshal request/response 841 usec + response wait 59137 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 269
+    Successful request count: 2500
+    Avg request latency: 56859 usec (overhead 12612 usec + queue 15067 usec + compute input 11895 usec + compute infer 7928 usec + compute output 9356 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 31, throughput: 414.109 infer/sec, latency 78995 usec
+== concurrency 32  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 32 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 32
+Request concurrency: 32
+  Client: 
+    Request count: 2500
+    Throughput: 414.446 infer/sec
+    p50 latency: 62050 usec
+    p90 latency: 71084 usec
+    p95 latency: 73817 usec
+    p99 latency: 79094 usec
+    Avg gRPC time: 62375 usec ((un)marshal request/response 837 usec + response wait 61538 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 259
+    Successful request count: 2500
+    Avg request latency: 59821 usec (overhead 13108 usec + queue 16523 usec + compute input 11962 usec + compute infer 8078 usec + compute output 10148 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 32, throughput: 414.446 infer/sec, latency 79094 usec
+wrote results/quant/rtx6000-quarter-nc24-fp16.csv
+
+=================================
+== Triton Inference Server SDK ==
+=================================
+
+NVIDIA Release 25.08 (build 202022643)
+
+Copyright (c) 2018-2025, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+and the Product-Specific Terms for NVIDIA AI Products
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+
+WARNING: The NVIDIA Driver was not detected.  GPU functionality will not be available.
+   Use the NVIDIA Container Toolkit to start this container with GPU support; see
+   https://docs.nvidia.com/datacenter/cloud-native/ .
+
+== concurrency 1  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Using synchronous calls for inference
+
+Request concurrency: 1
+Request concurrency: 1
+  Client: 
+    Request count: 2500
+    Throughput: 92.5534 infer/sec
+    p50 latency: 6705 usec
+    p90 latency: 7095 usec
+    p95 latency: 7289 usec
+    p99 latency: 8072 usec
+    Avg gRPC time: 6741 usec ((un)marshal request/response 302 usec + response wait 6439 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2500
+    Successful request count: 2500
+    Avg request latency: 4026 usec (overhead 718 usec + queue 220 usec + compute input 1234 usec + compute infer 961 usec + compute output 892 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 1, throughput: 92.5534 infer/sec, latency 8072 usec
+== concurrency 2  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 2 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 2
+Request concurrency: 2
+  Client: 
+    Request count: 2500
+    Throughput: 156.041 infer/sec
+    p50 latency: 7547 usec
+    p90 latency: 9150 usec
+    p95 latency: 9798 usec
+    p99 latency: 12012 usec
+    Avg gRPC time: 7802 usec ((un)marshal request/response 344 usec + response wait 7458 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2472
+    Successful request count: 2500
+    Avg request latency: 4161 usec (overhead 855 usec + queue 312 usec + compute input 1150 usec + compute infer 974 usec + compute output 870 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 2, throughput: 156.041 infer/sec, latency 12012 usec
+== concurrency 3  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 3 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 3
+Request concurrency: 3
+  Client: 
+    Request count: 2500
+    Throughput: 191.734 infer/sec
+    p50 latency: 9060 usec
+    p90 latency: 11252 usec
+    p95 latency: 12247 usec
+    p99 latency: 14124 usec
+    Avg gRPC time: 9320 usec ((un)marshal request/response 557 usec + response wait 8763 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2441
+    Successful request count: 2500
+    Avg request latency: 4613 usec (overhead 1053 usec + queue 461 usec + compute input 1227 usec + compute infer 986 usec + compute output 885 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 3, throughput: 191.734 infer/sec, latency 14124 usec
+== concurrency 4  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 4 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 4
+Request concurrency: 4
+  Client: 
+    Request count: 2500
+    Throughput: 207.489 infer/sec
+    p50 latency: 10801 usec
+    p90 latency: 14282 usec
+    p95 latency: 15678 usec
+    p99 latency: 19357 usec
+    Avg gRPC time: 11198 usec ((un)marshal request/response 698 usec + response wait 10500 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2361
+    Successful request count: 2500
+    Avg request latency: 5448 usec (overhead 1239 usec + queue 734 usec + compute input 1408 usec + compute infer 1037 usec + compute output 1029 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 4, throughput: 207.489 infer/sec, latency 19357 usec
+== concurrency 5  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 5 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 5
+Request concurrency: 5
+  Client: 
+    Request count: 2500
+    Throughput: 225.991 infer/sec
+    p50 latency: 12728 usec
+    p90 latency: 17031 usec
+    p95 latency: 18694 usec
+    p99 latency: 21708 usec
+    Avg gRPC time: 13102 usec ((un)marshal request/response 719 usec + response wait 12383 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2286
+    Successful request count: 2500
+    Avg request latency: 5874 usec (overhead 1333 usec + queue 889 usec + compute input 1425 usec + compute infer 1102 usec + compute output 1124 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 5, throughput: 225.991 infer/sec, latency 21708 usec
+== concurrency 6  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 6 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 6
+Request concurrency: 6
+  Client: 
+    Request count: 2500
+    Throughput: 275.959 infer/sec
+    p50 latency: 13446 usec
+    p90 latency: 18380 usec
+    p95 latency: 20314 usec
+    p99 latency: 23965 usec
+    Avg gRPC time: 13936 usec ((un)marshal request/response 771 usec + response wait 13165 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2225
+    Successful request count: 2500
+    Avg request latency: 6525 usec (overhead 1471 usec + queue 1232 usec + compute input 1505 usec + compute infer 1118 usec + compute output 1198 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 6, throughput: 275.959 infer/sec, latency 23965 usec
+== concurrency 7  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 7 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 7
+Request concurrency: 7
+  Client: 
+    Request count: 2500
+    Throughput: 276.362 infer/sec
+    p50 latency: 14189 usec
+    p90 latency: 19592 usec
+    p95 latency: 21691 usec
+    p99 latency: 25464 usec
+    Avg gRPC time: 14685 usec ((un)marshal request/response 718 usec + response wait 13967 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2150
+    Successful request count: 2500
+    Avg request latency: 7532 usec (overhead 1720 usec + queue 1596 usec + compute input 1563 usec + compute infer 1151 usec + compute output 1500 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 7, throughput: 276.362 infer/sec, latency 25464 usec
+== concurrency 8  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 8 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 8
+Request concurrency: 8
+  Client: 
+    Request count: 2500
+    Throughput: 310.976 infer/sec
+    p50 latency: 15895 usec
+    p90 latency: 22756 usec
+    p95 latency: 25041 usec
+    p99 latency: 30334 usec
+    Avg gRPC time: 16661 usec ((un)marshal request/response 770 usec + response wait 15891 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1992
+    Successful request count: 2500
+    Avg request latency: 9006 usec (overhead 1964 usec + queue 2266 usec + compute input 1833 usec + compute infer 1264 usec + compute output 1678 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 8, throughput: 310.976 infer/sec, latency 30334 usec
+== concurrency 9  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 9 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 9
+Request concurrency: 9
+  Client: 
+    Request count: 2500
+    Throughput: 309.065 infer/sec
+    p50 latency: 17168 usec
+    p90 latency: 23653 usec
+    p95 latency: 25719 usec
+    p99 latency: 29836 usec
+    Avg gRPC time: 17641 usec ((un)marshal request/response 783 usec + response wait 16858 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1907
+    Successful request count: 2500
+    Avg request latency: 9412 usec (overhead 2043 usec + queue 2476 usec + compute input 1733 usec + compute infer 1281 usec + compute output 1878 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 9, throughput: 309.065 infer/sec, latency 29836 usec
+== concurrency 10  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 10 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 10
+Request concurrency: 10
+  Client: 
+    Request count: 2500
+    Throughput: 310.717 infer/sec
+    p50 latency: 20088 usec
+    p90 latency: 28576 usec
+    p95 latency: 31205 usec
+    p99 latency: 36671 usec
+    Avg gRPC time: 20644 usec ((un)marshal request/response 796 usec + response wait 19848 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1582
+    Successful request count: 2500
+    Avg request latency: 12898 usec (overhead 2635 usec + queue 3777 usec + compute input 2785 usec + compute infer 1512 usec + compute output 2188 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 10, throughput: 310.717 infer/sec, latency 36671 usec
+== concurrency 11  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 11 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 11
+Request concurrency: 11
+  Client: 
+    Request count: 2500
+    Throughput: 310.284 infer/sec
+    p50 latency: 24500 usec
+    p90 latency: 33172 usec
+    p95 latency: 34965 usec
+    p99 latency: 39396 usec
+    Avg gRPC time: 24702 usec ((un)marshal request/response 810 usec + response wait 23892 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1283
+    Successful request count: 2500
+    Avg request latency: 16925 usec (overhead 3534 usec + queue 4702 usec + compute input 3830 usec + compute infer 1894 usec + compute output 2964 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 11, throughput: 310.284 infer/sec, latency 39396 usec
+== concurrency 12  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 12 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 12
+Request concurrency: 12
+  Client: 
+    Request count: 2500
+    Throughput: 310.532 infer/sec
+    p50 latency: 27176 usec
+    p90 latency: 33893 usec
+    p95 latency: 36130 usec
+    p99 latency: 40222 usec
+    Avg gRPC time: 26486 usec ((un)marshal request/response 801 usec + response wait 25685 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1124
+    Successful request count: 2500
+    Avg request latency: 19249 usec (overhead 4129 usec + queue 5292 usec + compute input 3809 usec + compute infer 2159 usec + compute output 3859 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 12, throughput: 310.532 infer/sec, latency 40222 usec
+== concurrency 13  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 13 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 13
+Request concurrency: 13
+  Client: 
+    Request count: 2500
+    Throughput: 311.076 infer/sec
+    p50 latency: 29949 usec
+    p90 latency: 37028 usec
+    p95 latency: 39411 usec
+    p99 latency: 45207 usec
+    Avg gRPC time: 29519 usec ((un)marshal request/response 838 usec + response wait 28681 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 925
+    Successful request count: 2500
+    Avg request latency: 22950 usec (overhead 5079 usec + queue 6540 usec + compute input 4624 usec + compute infer 2412 usec + compute output 4294 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 13, throughput: 311.076 infer/sec, latency 45207 usec
+== concurrency 14  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 14 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 14
+Request concurrency: 14
+  Client: 
+    Request count: 2500
+    Throughput: 311.512 infer/sec
+    p50 latency: 32559 usec
+    p90 latency: 40659 usec
+    p95 latency: 42993 usec
+    p99 latency: 48579 usec
+    Avg gRPC time: 32639 usec ((un)marshal request/response 821 usec + response wait 31818 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 786
+    Successful request count: 2500
+    Avg request latency: 26720 usec (overhead 5975 usec + queue 7799 usec + compute input 5028 usec + compute infer 2679 usec + compute output 5238 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 14, throughput: 311.512 infer/sec, latency 48579 usec
+== concurrency 15  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 15 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 15
+Request concurrency: 15
+  Client: 
+    Request count: 2500
+    Throughput: 311.235 infer/sec
+    p50 latency: 34872 usec
+    p90 latency: 45561 usec
+    p95 latency: 48956 usec
+    p99 latency: 54562 usec
+    Avg gRPC time: 35349 usec ((un)marshal request/response 814 usec + response wait 34535 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 706
+    Successful request count: 2500
+    Avg request latency: 29323 usec (overhead 6521 usec + queue 8040 usec + compute input 6761 usec + compute infer 2941 usec + compute output 5059 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 15, throughput: 311.235 infer/sec, latency 54562 usec
+== concurrency 16  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 16 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 16
+Request concurrency: 16
+  Client: 
+    Request count: 2500
+    Throughput: 354.88 infer/sec
+    p50 latency: 36241 usec
+    p90 latency: 46814 usec
+    p95 latency: 50070 usec
+    p99 latency: 56241 usec
+    Avg gRPC time: 36626 usec ((un)marshal request/response 819 usec + response wait 35807 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 652
+    Successful request count: 2500
+    Avg request latency: 30882 usec (overhead 7002 usec + queue 8440 usec + compute input 6262 usec + compute infer 3062 usec + compute output 6115 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 16, throughput: 354.88 infer/sec, latency 56241 usec
+== concurrency 17  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 17 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 17
+Request concurrency: 17
+  Client: 
+    Request count: 2500
+    Throughput: 353.034 infer/sec
+    p50 latency: 37404 usec
+    p90 latency: 49066 usec
+    p95 latency: 52855 usec
+    p99 latency: 61135 usec
+    Avg gRPC time: 37958 usec ((un)marshal request/response 834 usec + response wait 37124 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 627
+    Successful request count: 2500
+    Avg request latency: 31773 usec (overhead 7308 usec + queue 8695 usec + compute input 6406 usec + compute infer 3262 usec + compute output 6101 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 17, throughput: 353.034 infer/sec, latency 61135 usec
+== concurrency 18  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 18 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 18
+Request concurrency: 18
+  Client: 
+    Request count: 2500
+    Throughput: 310.885 infer/sec
+    p50 latency: 42614 usec
+    p90 latency: 54871 usec
+    p95 latency: 58738 usec
+    p99 latency: 65761 usec
+    Avg gRPC time: 42868 usec ((un)marshal request/response 831 usec + response wait 42037 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 546
+    Successful request count: 2500
+    Avg request latency: 37830 usec (overhead 8674 usec + queue 9948 usec + compute input 7084 usec + compute infer 3679 usec + compute output 8443 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 18, throughput: 310.885 infer/sec, latency 65761 usec
+== concurrency 19  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 19 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 19
+Request concurrency: 19
+  Client: 
+    Request count: 2500
+    Throughput: 354.068 infer/sec
+    p50 latency: 44223 usec
+    p90 latency: 55064 usec
+    p95 latency: 58247 usec
+    p99 latency: 64791 usec
+    Avg gRPC time: 43929 usec ((un)marshal request/response 828 usec + response wait 43101 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 493
+    Successful request count: 2500
+    Avg request latency: 39349 usec (overhead 9080 usec + queue 10061 usec + compute input 7632 usec + compute infer 3918 usec + compute output 8657 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 19, throughput: 354.068 infer/sec, latency 64791 usec
+== concurrency 20  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 20 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 20
+Request concurrency: 20
+  Client: 
+    Request count: 2500
+    Throughput: 353.261 infer/sec
+    p50 latency: 45768 usec
+    p90 latency: 59131 usec
+    p95 latency: 63169 usec
+    p99 latency: 70400 usec
+    Avg gRPC time: 46289 usec ((un)marshal request/response 843 usec + response wait 45446 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 443
+    Successful request count: 2500
+    Avg request latency: 42025 usec (overhead 9654 usec + queue 10759 usec + compute input 8815 usec + compute infer 4119 usec + compute output 8676 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 20, throughput: 353.261 infer/sec, latency 70400 usec
+== concurrency 21  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 21 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 21
+Request concurrency: 21
+  Client: 
+    Request count: 2500
+    Throughput: 355.943 infer/sec
+    p50 latency: 49169 usec
+    p90 latency: 60292 usec
+    p95 latency: 63602 usec
+    p99 latency: 71320 usec
+    Avg gRPC time: 49108 usec ((un)marshal request/response 830 usec + response wait 48278 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 420
+    Successful request count: 2500
+    Avg request latency: 45334 usec (overhead 10386 usec + queue 11511 usec + compute input 8672 usec + compute infer 4535 usec + compute output 10229 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 21, throughput: 355.943 infer/sec, latency 71320 usec
+== concurrency 22  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 22 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 22
+Request concurrency: 22
+  Client: 
+    Request count: 2500
+    Throughput: 310.661 infer/sec
+    p50 latency: 56211 usec
+    p90 latency: 67119 usec
+    p95 latency: 70250 usec
+    p99 latency: 81459 usec
+    Avg gRPC time: 55637 usec ((un)marshal request/response 831 usec + response wait 54806 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 372
+    Successful request count: 2500
+    Avg request latency: 52417 usec (overhead 11530 usec + queue 13316 usec + compute input 12622 usec + compute infer 5141 usec + compute output 9806 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 22, throughput: 310.661 infer/sec, latency 81459 usec
+== concurrency 23  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 23 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 23
+Request concurrency: 23
+  Client: 
+    Request count: 2500
+    Throughput: 310.069 infer/sec
+    p50 latency: 56854 usec
+    p90 latency: 67337 usec
+    p95 latency: 71300 usec
+    p99 latency: 81610 usec
+    Avg gRPC time: 56829 usec ((un)marshal request/response 844 usec + response wait 55985 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 356
+    Successful request count: 2500
+    Avg request latency: 53584 usec (overhead 11718 usec + queue 13945 usec + compute input 12694 usec + compute infer 5126 usec + compute output 10101 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 23, throughput: 310.069 infer/sec, latency 81610 usec
+== concurrency 24  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 24 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 24
+Request concurrency: 24
+  Client: 
+    Request count: 2500
+    Throughput: 356.08 infer/sec
+    p50 latency: 58411 usec
+    p90 latency: 68664 usec
+    p95 latency: 72964 usec
+    p99 latency: 84714 usec
+    Avg gRPC time: 58422 usec ((un)marshal request/response 824 usec + response wait 57598 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 333
+    Successful request count: 2500
+    Avg request latency: 55288 usec (overhead 11810 usec + queue 14495 usec + compute input 13714 usec + compute infer 5294 usec + compute output 9974 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 24, throughput: 356.08 infer/sec, latency 84714 usec
+== concurrency 25  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 25 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 25
+Request concurrency: 25
+  Client: 
+    Request count: 2500
+    Throughput: 355.104 infer/sec
+    p50 latency: 57592 usec
+    p90 latency: 68042 usec
+    p95 latency: 72170 usec
+    p99 latency: 77973 usec
+    Avg gRPC time: 57996 usec ((un)marshal request/response 829 usec + response wait 57167 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 324
+    Successful request count: 2500
+    Avg request latency: 54706 usec (overhead 11663 usec + queue 14488 usec + compute input 13622 usec + compute infer 5312 usec + compute output 9620 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 25, throughput: 355.104 infer/sec, latency 77973 usec
+== concurrency 26  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 26 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 26
+Request concurrency: 26
+  Client: 
+    Request count: 2500
+    Throughput: 356.265 infer/sec
+    p50 latency: 57588 usec
+    p90 latency: 70506 usec
+    p95 latency: 73691 usec
+    p99 latency: 81512 usec
+    Avg gRPC time: 58272 usec ((un)marshal request/response 841 usec + response wait 57431 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 314
+    Successful request count: 2500
+    Avg request latency: 54997 usec (overhead 11853 usec + queue 15127 usec + compute input 13027 usec + compute infer 5346 usec + compute output 9643 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 26, throughput: 356.265 infer/sec, latency 81512 usec
+== concurrency 27  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 27 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 27
+Request concurrency: 27
+  Client: 
+    Request count: 2500
+    Throughput: 413.71 infer/sec
+    p50 latency: 56165 usec
+    p90 latency: 67087 usec
+    p95 latency: 70651 usec
+    p99 latency: 82867 usec
+    Avg gRPC time: 56150 usec ((un)marshal request/response 850 usec + response wait 55300 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 314
+    Successful request count: 2500
+    Avg request latency: 52462 usec (overhead 11931 usec + queue 14224 usec + compute input 11791 usec + compute infer 5380 usec + compute output 9135 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 27, throughput: 413.71 infer/sec, latency 82867 usec
+== concurrency 28  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 28 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 28
+Request concurrency: 28
+  Client: 
+    Request count: 2500
+    Throughput: 413.356 infer/sec
+    p50 latency: 54896 usec
+    p90 latency: 66404 usec
+    p95 latency: 69746 usec
+    p99 latency: 77891 usec
+    Avg gRPC time: 55431 usec ((un)marshal request/response 832 usec + response wait 54599 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 302
+    Successful request count: 2500
+    Avg request latency: 51747 usec (overhead 12142 usec + queue 13515 usec + compute input 11599 usec + compute infer 5589 usec + compute output 8902 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 28, throughput: 413.356 infer/sec, latency 77891 usec
+== concurrency 29  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 29 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 29
+Request concurrency: 29
+  Client: 
+    Request count: 2500
+    Throughput: 414.144 infer/sec
+    p50 latency: 57054 usec
+    p90 latency: 65355 usec
+    p95 latency: 67782 usec
+    p99 latency: 75557 usec
+    Avg gRPC time: 57480 usec ((un)marshal request/response 834 usec + response wait 56646 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 276
+    Successful request count: 2500
+    Avg request latency: 54176 usec (overhead 12229 usec + queue 13886 usec + compute input 13685 usec + compute infer 5831 usec + compute output 8544 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 29, throughput: 414.144 infer/sec, latency 75557 usec
+== concurrency 30  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 30 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 30
+Request concurrency: 30
+  Client: 
+    Request count: 2500
+    Throughput: 413.641 infer/sec
+    p50 latency: 54130 usec
+    p90 latency: 62824 usec
+    p95 latency: 65385 usec
+    p99 latency: 71718 usec
+    Avg gRPC time: 54392 usec ((un)marshal request/response 841 usec + response wait 53551 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 275
+    Successful request count: 2500
+    Avg request latency: 51191 usec (overhead 12334 usec + queue 12761 usec + compute input 11672 usec + compute infer 5907 usec + compute output 8516 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 30, throughput: 413.641 infer/sec, latency 71718 usec
+== concurrency 31  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 31 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 31
+Request concurrency: 31
+  Client: 
+    Request count: 2500
+    Throughput: 414.88 infer/sec
+    p50 latency: 57037 usec
+    p90 latency: 65883 usec
+    p95 latency: 68724 usec
+    p99 latency: 75011 usec
+    Avg gRPC time: 57183 usec ((un)marshal request/response 832 usec + response wait 56351 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 268
+    Successful request count: 2500
+    Avg request latency: 54158 usec (overhead 12666 usec + queue 13718 usec + compute input 12368 usec + compute infer 6046 usec + compute output 9359 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 31, throughput: 414.88 infer/sec, latency 75011 usec
+== concurrency 32  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 32 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 32
+Request concurrency: 32
+  Client: 
+    Request count: 2500
+    Throughput: 413.331 infer/sec
+    p50 latency: 59952 usec
+    p90 latency: 70950 usec
+    p95 latency: 74203 usec
+    p99 latency: 81775 usec
+    Avg gRPC time: 60505 usec ((un)marshal request/response 836 usec + response wait 59669 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 263
+    Successful request count: 2500
+    Avg request latency: 57452 usec (overhead 13311 usec + queue 15841 usec + compute input 13029 usec + compute infer 6122 usec + compute output 9148 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 32, throughput: 413.331 infer/sec, latency 81775 usec
+wrote results/quant/rtx6000-quarter-nc24-fp8.csv
+
+=================================
+== Triton Inference Server SDK ==
+=================================
+
+NVIDIA Release 25.08 (build 202022643)
+
+Copyright (c) 2018-2025, NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+Various files include modifications (c) NVIDIA CORPORATION & AFFILIATES.  All rights reserved.
+
+GOVERNING TERMS: The software and materials are governed by the NVIDIA Software License Agreement
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-software-license-agreement/)
+and the Product-Specific Terms for NVIDIA AI Products
+(found at https://www.nvidia.com/en-us/agreements/enterprise-software/product-specific-terms-for-ai-products/).
+
+WARNING: The NVIDIA Driver was not detected.  GPU functionality will not be available.
+   Use the NVIDIA Container Toolkit to start this container with GPU support; see
+   https://docs.nvidia.com/datacenter/cloud-native/ .
+
+== concurrency 1  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Using synchronous calls for inference
+
+Request concurrency: 1
+Request concurrency: 1
+  Client: 
+    Request count: 2500
+    Throughput: 96.0629 infer/sec
+    p50 latency: 6661 usec
+    p90 latency: 7218 usec
+    p95 latency: 7428 usec
+    p99 latency: 7929 usec
+    Avg gRPC time: 6727 usec ((un)marshal request/response 250 usec + response wait 6477 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2500
+    Successful request count: 2500
+    Avg request latency: 3890 usec (overhead 697 usec + queue 236 usec + compute input 1242 usec + compute infer 820 usec + compute output 893 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 1, throughput: 96.0629 infer/sec, latency 7929 usec
+== concurrency 2  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 2 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 2
+Request concurrency: 2
+  Client: 
+    Request count: 2500
+    Throughput: 155.863 infer/sec
+    p50 latency: 7336 usec
+    p90 latency: 8708 usec
+    p95 latency: 9274 usec
+    p99 latency: 11963 usec
+    Avg gRPC time: 7466 usec ((un)marshal request/response 331 usec + response wait 7135 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2483
+    Successful request count: 2500
+    Avg request latency: 3884 usec (overhead 766 usec + queue 345 usec + compute input 1166 usec + compute infer 841 usec + compute output 765 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 2, throughput: 155.863 infer/sec, latency 11963 usec
+== concurrency 3  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 3 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 3
+Request concurrency: 3
+  Client: 
+    Request count: 2500
+    Throughput: 191.714 infer/sec
+    p50 latency: 9427 usec
+    p90 latency: 11985 usec
+    p95 latency: 13498 usec
+    p99 latency: 15623 usec
+    Avg gRPC time: 9770 usec ((un)marshal request/response 576 usec + response wait 9194 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2439
+    Successful request count: 2500
+    Avg request latency: 4987 usec (overhead 1058 usec + queue 565 usec + compute input 1431 usec + compute infer 901 usec + compute output 1031 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 3, throughput: 191.714 infer/sec, latency 15623 usec
+== concurrency 4  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 4 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 4
+Request concurrency: 4
+  Client: 
+    Request count: 2500
+    Throughput: 207.737 infer/sec
+    p50 latency: 10819 usec
+    p90 latency: 14814 usec
+    p95 latency: 16249 usec
+    p99 latency: 19664 usec
+    Avg gRPC time: 11309 usec ((un)marshal request/response 689 usec + response wait 10620 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2371
+    Successful request count: 2500
+    Avg request latency: 5573 usec (overhead 1191 usec + queue 812 usec + compute input 1457 usec + compute infer 990 usec + compute output 1121 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 4, throughput: 207.737 infer/sec, latency 19664 usec
+== concurrency 5  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 5 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 5
+Request concurrency: 5
+  Client: 
+    Request count: 2500
+    Throughput: 249.275 infer/sec
+    p50 latency: 12498 usec
+    p90 latency: 16954 usec
+    p95 latency: 18569 usec
+    p99 latency: 22355 usec
+    Avg gRPC time: 13015 usec ((un)marshal request/response 702 usec + response wait 12313 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2249
+    Successful request count: 2500
+    Avg request latency: 5774 usec (overhead 1295 usec + queue 919 usec + compute input 1327 usec + compute infer 1069 usec + compute output 1163 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 5, throughput: 249.275 infer/sec, latency 22355 usec
+== concurrency 6  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 6 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 6
+Request concurrency: 6
+  Client: 
+    Request count: 2500
+    Throughput: 248.913 infer/sec
+    p50 latency: 14136 usec
+    p90 latency: 20087 usec
+    p95 latency: 21946 usec
+    p99 latency: 26086 usec
+    Avg gRPC time: 14722 usec ((un)marshal request/response 742 usec + response wait 13980 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2181
+    Successful request count: 2500
+    Avg request latency: 7506 usec (overhead 1521 usec + queue 1643 usec + compute input 1659 usec + compute infer 1309 usec + compute output 1374 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 6, throughput: 248.913 infer/sec, latency 26086 usec
+== concurrency 7  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 7 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 7
+Request concurrency: 7
+  Client: 
+    Request count: 2500
+    Throughput: 276.008 infer/sec
+    p50 latency: 15069 usec
+    p90 latency: 22440 usec
+    p95 latency: 24957 usec
+    p99 latency: 28906 usec
+    Avg gRPC time: 15901 usec ((un)marshal request/response 737 usec + response wait 15164 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 2049
+    Successful request count: 2500
+    Avg request latency: 8899 usec (overhead 1851 usec + queue 2246 usec + compute input 1755 usec + compute infer 1412 usec + compute output 1634 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 7, throughput: 276.008 infer/sec, latency 28906 usec
+== concurrency 8  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 8 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 8
+Request concurrency: 8
+  Client: 
+    Request count: 2500
+    Throughput: 310.663 infer/sec
+    p50 latency: 16430 usec
+    p90 latency: 23489 usec
+    p95 latency: 25558 usec
+    p99 latency: 29951 usec
+    Avg gRPC time: 17035 usec ((un)marshal request/response 789 usec + response wait 16246 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1934
+    Successful request count: 2500
+    Avg request latency: 9387 usec (overhead 2006 usec + queue 2503 usec + compute input 1781 usec + compute infer 1494 usec + compute output 1602 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 8, throughput: 310.663 infer/sec, latency 29951 usec
+== concurrency 9  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 9 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 9
+Request concurrency: 9
+  Client: 
+    Request count: 2500
+    Throughput: 311.226 infer/sec
+    p50 latency: 18710 usec
+    p90 latency: 26167 usec
+    p95 latency: 28726 usec
+    p99 latency: 33743 usec
+    Avg gRPC time: 19264 usec ((un)marshal request/response 790 usec + response wait 18474 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1750
+    Successful request count: 2500
+    Avg request latency: 11315 usec (overhead 2368 usec + queue 3350 usec + compute input 2147 usec + compute infer 1621 usec + compute output 1828 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 9, throughput: 311.226 infer/sec, latency 33743 usec
+== concurrency 10  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 10 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 10
+Request concurrency: 10
+  Client: 
+    Request count: 2500
+    Throughput: 310.396 infer/sec
+    p50 latency: 19628 usec
+    p90 latency: 27797 usec
+    p95 latency: 30651 usec
+    p99 latency: 38821 usec
+    Avg gRPC time: 20366 usec ((un)marshal request/response 778 usec + response wait 19588 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1577
+    Successful request count: 2500
+    Avg request latency: 12634 usec (overhead 2628 usec + queue 3787 usec + compute input 2495 usec + compute infer 1576 usec + compute output 2147 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 10, throughput: 310.396 infer/sec, latency 38821 usec
+== concurrency 11  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 11 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 11
+Request concurrency: 11
+  Client: 
+    Request count: 2500
+    Throughput: 311.472 infer/sec
+    p50 latency: 23789 usec
+    p90 latency: 32824 usec
+    p95 latency: 35223 usec
+    p99 latency: 40560 usec
+    Avg gRPC time: 24142 usec ((un)marshal request/response 824 usec + response wait 23318 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1295
+    Successful request count: 2500
+    Avg request latency: 16351 usec (overhead 3546 usec + queue 4761 usec + compute input 3380 usec + compute infer 1826 usec + compute output 2837 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 11, throughput: 311.472 infer/sec, latency 40560 usec
+== concurrency 12  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 12 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 12
+Request concurrency: 12
+  Client: 
+    Request count: 2500
+    Throughput: 310.488 infer/sec
+    p50 latency: 26497 usec
+    p90 latency: 34260 usec
+    p95 latency: 36509 usec
+    p99 latency: 40794 usec
+    Avg gRPC time: 26317 usec ((un)marshal request/response 810 usec + response wait 25507 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 1107
+    Successful request count: 2500
+    Avg request latency: 19050 usec (overhead 4204 usec + queue 5578 usec + compute input 3917 usec + compute infer 1956 usec + compute output 3393 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 12, throughput: 310.488 infer/sec, latency 40794 usec
+== concurrency 13  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 13 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 13
+Request concurrency: 13
+  Client: 
+    Request count: 2500
+    Throughput: 310.23 infer/sec
+    p50 latency: 29691 usec
+    p90 latency: 37143 usec
+    p95 latency: 39386 usec
+    p99 latency: 43985 usec
+    Avg gRPC time: 29639 usec ((un)marshal request/response 817 usec + response wait 28822 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 886
+    Successful request count: 2500
+    Avg request latency: 23478 usec (overhead 5552 usec + queue 6725 usec + compute input 4689 usec + compute infer 2096 usec + compute output 4415 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 13, throughput: 310.23 infer/sec, latency 43985 usec
+== concurrency 14  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 14 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 14
+Request concurrency: 14
+  Client: 
+    Request count: 2500
+    Throughput: 355.473 infer/sec
+    p50 latency: 30780 usec
+    p90 latency: 38193 usec
+    p95 latency: 40513 usec
+    p99 latency: 45104 usec
+    Avg gRPC time: 30567 usec ((un)marshal request/response 810 usec + response wait 29757 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 826
+    Successful request count: 2500
+    Avg request latency: 24265 usec (overhead 5683 usec + queue 7055 usec + compute input 4971 usec + compute infer 2174 usec + compute output 4381 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 14, throughput: 355.473 infer/sec, latency 45104 usec
+== concurrency 15  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 15 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 15
+Request concurrency: 15
+  Client: 
+    Request count: 2500
+    Throughput: 311.162 infer/sec
+    p50 latency: 33742 usec
+    p90 latency: 42956 usec
+    p95 latency: 46336 usec
+    p99 latency: 51520 usec
+    Avg gRPC time: 33959 usec ((un)marshal request/response 857 usec + response wait 33102 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 716
+    Successful request count: 2500
+    Avg request latency: 27808 usec (overhead 6561 usec + queue 7754 usec + compute input 5742 usec + compute infer 2406 usec + compute output 5344 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 15, throughput: 311.162 infer/sec, latency 51520 usec
+== concurrency 16  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 16 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 16
+Request concurrency: 16
+  Client: 
+    Request count: 2500
+    Throughput: 354.585 infer/sec
+    p50 latency: 36408 usec
+    p90 latency: 45501 usec
+    p95 latency: 48512 usec
+    p99 latency: 53769 usec
+    Avg gRPC time: 36349 usec ((un)marshal request/response 820 usec + response wait 35529 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 667
+    Successful request count: 2500
+    Avg request latency: 30552 usec (overhead 6909 usec + queue 8735 usec + compute input 6162 usec + compute infer 2496 usec + compute output 6249 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 16, throughput: 354.585 infer/sec, latency 53769 usec
+== concurrency 17  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 17 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 17
+Request concurrency: 17
+  Client: 
+    Request count: 2500
+    Throughput: 356.109 infer/sec
+    p50 latency: 38096 usec
+    p90 latency: 49124 usec
+    p95 latency: 52561 usec
+    p99 latency: 61407 usec
+    Avg gRPC time: 38668 usec ((un)marshal request/response 848 usec + response wait 37820 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 591
+    Successful request count: 2500
+    Avg request latency: 33068 usec (overhead 7550 usec + queue 9140 usec + compute input 6720 usec + compute infer 2645 usec + compute output 7012 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 17, throughput: 356.109 infer/sec, latency 61407 usec
+== concurrency 18  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 18 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 18
+Request concurrency: 18
+  Client: 
+    Request count: 2500
+    Throughput: 354.57 infer/sec
+    p50 latency: 38902 usec
+    p90 latency: 49882 usec
+    p95 latency: 53448 usec
+    p99 latency: 59790 usec
+    Avg gRPC time: 39398 usec ((un)marshal request/response 801 usec + response wait 38597 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 543
+    Successful request count: 2500
+    Avg request latency: 34028 usec (overhead 7757 usec + queue 9038 usec + compute input 7288 usec + compute infer 2751 usec + compute output 7193 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 18, throughput: 354.57 infer/sec, latency 59790 usec
+== concurrency 19  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 19 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 19
+Request concurrency: 19
+  Client: 
+    Request count: 2500
+    Throughput: 355.691 infer/sec
+    p50 latency: 43216 usec
+    p90 latency: 56280 usec
+    p95 latency: 58971 usec
+    p99 latency: 64441 usec
+    Avg gRPC time: 43784 usec ((un)marshal request/response 828 usec + response wait 42956 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 487
+    Successful request count: 2500
+    Avg request latency: 39177 usec (overhead 9089 usec + queue 10203 usec + compute input 9055 usec + compute infer 3011 usec + compute output 7818 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 19, throughput: 355.691 infer/sec, latency 64441 usec
+== concurrency 20  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 20 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 20
+Request concurrency: 20
+  Client: 
+    Request count: 2500
+    Throughput: 354.005 infer/sec
+    p50 latency: 44929 usec
+    p90 latency: 56045 usec
+    p95 latency: 59121 usec
+    p99 latency: 66219 usec
+    Avg gRPC time: 44752 usec ((un)marshal request/response 827 usec + response wait 43925 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 463
+    Successful request count: 2500
+    Avg request latency: 40374 usec (overhead 9466 usec + queue 10384 usec + compute input 8104 usec + compute infer 3099 usec + compute output 9320 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 20, throughput: 354.005 infer/sec, latency 66219 usec
+== concurrency 21  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 21 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 21
+Request concurrency: 21
+  Client: 
+    Request count: 2500
+    Throughput: 354.227 infer/sec
+    p50 latency: 45578 usec
+    p90 latency: 56087 usec
+    p95 latency: 59745 usec
+    p99 latency: 64761 usec
+    Avg gRPC time: 45541 usec ((un)marshal request/response 814 usec + response wait 44727 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 433
+    Successful request count: 2500
+    Avg request latency: 41139 usec (overhead 9503 usec + queue 10734 usec + compute input 8376 usec + compute infer 3140 usec + compute output 9385 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 21, throughput: 354.227 infer/sec, latency 64761 usec
+== concurrency 22  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 22 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 22
+Request concurrency: 22
+  Client: 
+    Request count: 2500
+    Throughput: 354.299 infer/sec
+    p50 latency: 50049 usec
+    p90 latency: 60343 usec
+    p95 latency: 64228 usec
+    p99 latency: 73881 usec
+    Avg gRPC time: 50129 usec ((un)marshal request/response 838 usec + response wait 49291 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 396
+    Successful request count: 2500
+    Avg request latency: 46353 usec (overhead 10617 usec + queue 11995 usec + compute input 9490 usec + compute infer 3528 usec + compute output 10722 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 22, throughput: 354.299 infer/sec, latency 73881 usec
+== concurrency 23  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 23 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 23
+Request concurrency: 23
+  Client: 
+    Request count: 2500
+    Throughput: 413.845 infer/sec
+    p50 latency: 46013 usec
+    p90 latency: 55571 usec
+    p95 latency: 59111 usec
+    p99 latency: 67102 usec
+    Avg gRPC time: 46243 usec ((un)marshal request/response 828 usec + response wait 45415 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 382
+    Successful request count: 2500
+    Avg request latency: 41978 usec (overhead 10064 usec + queue 10865 usec + compute input 9301 usec + compute infer 3437 usec + compute output 8309 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 23, throughput: 413.845 infer/sec, latency 67102 usec
+== concurrency 24  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 24 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 24
+Request concurrency: 24
+  Client: 
+    Request count: 2500
+    Throughput: 356.006 infer/sec
+    p50 latency: 51442 usec
+    p90 latency: 62687 usec
+    p95 latency: 66546 usec
+    p99 latency: 74710 usec
+    Avg gRPC time: 52076 usec ((un)marshal request/response 834 usec + response wait 51242 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 353
+    Successful request count: 2500
+    Avg request latency: 48489 usec (overhead 10939 usec + queue 12637 usec + compute input 9912 usec + compute infer 3709 usec + compute output 11290 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 24, throughput: 356.006 infer/sec, latency 74710 usec
+== concurrency 25  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 25 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 25
+Request concurrency: 25
+  Client: 
+    Request count: 2500
+    Throughput: 354.619 infer/sec
+    p50 latency: 53822 usec
+    p90 latency: 63586 usec
+    p95 latency: 66469 usec
+    p99 latency: 73183 usec
+    Avg gRPC time: 54233 usec ((un)marshal request/response 843 usec + response wait 53390 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 333
+    Successful request count: 2500
+    Avg request latency: 51001 usec (overhead 11576 usec + queue 13396 usec + compute input 10168 usec + compute infer 3752 usec + compute output 12108 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 25, throughput: 354.619 infer/sec, latency 73183 usec
+== concurrency 26  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 26 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 26
+Request concurrency: 26
+  Client: 
+    Request count: 2500
+    Throughput: 412.592 infer/sec
+    p50 latency: 54217 usec
+    p90 latency: 62653 usec
+    p95 latency: 65350 usec
+    p99 latency: 70314 usec
+    Avg gRPC time: 54134 usec ((un)marshal request/response 824 usec + response wait 53310 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 326
+    Successful request count: 2500
+    Avg request latency: 50939 usec (overhead 11566 usec + queue 13262 usec + compute input 10196 usec + compute infer 3805 usec + compute output 12109 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 26, throughput: 412.592 infer/sec, latency 70314 usec
+== concurrency 27  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 27 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 27
+Request concurrency: 27
+  Client: 
+    Request count: 2500
+    Throughput: 413.871 infer/sec
+    p50 latency: 55121 usec
+    p90 latency: 64944 usec
+    p95 latency: 67873 usec
+    p99 latency: 72836 usec
+    Avg gRPC time: 55303 usec ((un)marshal request/response 843 usec + response wait 54460 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 312
+    Successful request count: 2500
+    Avg request latency: 52143 usec (overhead 11976 usec + queue 13471 usec + compute input 10671 usec + compute infer 3895 usec + compute output 12130 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 27, throughput: 413.871 infer/sec, latency 72836 usec
+== concurrency 28  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 28 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 28
+Request concurrency: 28
+  Client: 
+    Request count: 2500
+    Throughput: 412.478 infer/sec
+    p50 latency: 54439 usec
+    p90 latency: 65442 usec
+    p95 latency: 68824 usec
+    p99 latency: 76521 usec
+    Avg gRPC time: 55199 usec ((un)marshal request/response 838 usec + response wait 54361 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 294
+    Successful request count: 2500
+    Avg request latency: 51879 usec (overhead 11914 usec + queue 13013 usec + compute input 11321 usec + compute infer 4019 usec + compute output 11612 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 28, throughput: 412.478 infer/sec, latency 76521 usec
+== concurrency 29  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 29 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 29
+Request concurrency: 29
+  Client: 
+    Request count: 2500
+    Throughput: 412.949 infer/sec
+    p50 latency: 56917 usec
+    p90 latency: 66849 usec
+    p95 latency: 69785 usec
+    p99 latency: 77112 usec
+    Avg gRPC time: 57572 usec ((un)marshal request/response 835 usec + response wait 56737 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 277
+    Successful request count: 2500
+    Avg request latency: 54857 usec (overhead 12762 usec + queue 13609 usec + compute input 12035 usec + compute infer 4169 usec + compute output 12281 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 29, throughput: 412.949 infer/sec, latency 77112 usec
+== concurrency 30  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 30 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 30
+Request concurrency: 30
+  Client: 
+    Request count: 2500
+    Throughput: 413.173 infer/sec
+    p50 latency: 56549 usec
+    p90 latency: 66547 usec
+    p95 latency: 69357 usec
+    p99 latency: 75454 usec
+    Avg gRPC time: 56627 usec ((un)marshal request/response 851 usec + response wait 55776 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 279
+    Successful request count: 2500
+    Avg request latency: 53426 usec (overhead 12631 usec + queue 13625 usec + compute input 12109 usec + compute infer 4195 usec + compute output 10864 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 30, throughput: 413.173 infer/sec, latency 75454 usec
+== concurrency 31  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 31 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 31
+Request concurrency: 31
+  Client: 
+    Request count: 2500
+    Throughput: 412.326 infer/sec
+    p50 latency: 58451 usec
+    p90 latency: 66620 usec
+    p95 latency: 69375 usec
+    p99 latency: 73936 usec
+    Avg gRPC time: 58618 usec ((un)marshal request/response 825 usec + response wait 57793 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 266
+    Successful request count: 2500
+    Avg request latency: 56032 usec (overhead 12688 usec + queue 14401 usec + compute input 12567 usec + compute infer 4318 usec + compute output 12057 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 31, throughput: 412.326 infer/sec, latency 73936 usec
+== concurrency 32  (warmup 1000 + measure 2500) ==
+*** Measurement Settings ***
+  Batch size: 1
+  Service Kind: TRITON
+  Sending 1000 warmup requests
+  Sending 2500 benchmark requests
+  Latency limit: 0 msec
+  Concurrency limit: 32 concurrent requests
+  Using synchronous calls for inference
+
+Request concurrency: 32
+Request concurrency: 32
+  Client: 
+    Request count: 2500
+    Throughput: 413.531 infer/sec
+    p50 latency: 58264 usec
+    p90 latency: 70009 usec
+    p95 latency: 73869 usec
+    p99 latency: 83192 usec
+    Avg gRPC time: 58825 usec ((un)marshal request/response 837 usec + response wait 57988 usec)
+  Server: 
+    Inference count: 2500
+    Execution count: 266
+    Successful request count: 2500
+    Avg request latency: 55974 usec (overhead 13094 usec + queue 15269 usec + compute input 12464 usec + compute infer 4333 usec + compute output 10813 usec)
+Inferences/Second vs. Client p99 Batch Latency
+Concurrency: 32, throughput: 413.531 infer/sec, latency 83192 usec
+wrote results/quant/rtx6000-quarter-nc24-int8.csv
+# YOLOv8s 量化实验: rtx6000-quarter-nc24
+
+环境: label=rtx6000-quarter-nc24 · NVIDIA RTX Pro 6000 Blackwell DC-1-24Q, 595.58.03, [Insufficient Permissions] · TensorRT v101302 · TensorRT version: 10.13.2 · TensorRT version: 10.13.2 · TensorRT version: 10.13.2
+
+## 1. 精度 (COCO val2017 评测集 4500 张, 与校准集不重叠)
+
+| 变体 | mAP50-95 | ΔmAP50-95 vs FP16 | mAP50 |
+|---|---|---|---|
+| fp16 | 0.4515 | +0.00 pt | 0.6187 |
+| fp8 | 0.4468 | -0.47 pt | 0.6159 |
+| int8 | 0.4417 | -0.98 pt | 0.6136 |
+
+## 2. 三层吞吐与加速比 (img/s; 括号内为相对 FP16)
+
+| 变体 | GPU纯计算 b1 | GPU纯计算 b8 | GPU纯计算 b32 | 含传输 b1 | 含传输 b8 | 含传输 b32 | Triton QPS@p99≤50ms |
+|---|---|---|---|---|---|---|---|
+| fp16 | 858 (1.00×) | 1275 (1.00×) | 1208 (1.00×) | 858 (1.00×) | 1249 (1.00×) | 1178 (1.00×) | 309.9 (1.00×) |
+| fp8 | 1071 (1.25×) | 1757 (1.38×) | 1498 (1.24×) | 1071 (1.25×) | 1707 (1.37×) | 1456 (1.24×) | 311.5 (1.01×) |
+| int8 | 1373 (1.60×) | 2389 (1.87×) | 2144 (1.77×) | 1380 (1.61×) | 2357 (1.89×) | 2082 (1.77×) | 355.5 (1.15×) |
+
+## 3. 逐层归因 (trtexec --dumpProfile, batch 见 PROFILE_BATCH, 默认 8)
+
+| 变体 | 层数 | GPU 总耗时 ms | 低精度卷积占比 (个数) | 卷积按精度计数 | reformat 时间占比 | 未融合 Q/DQ 时间占比 |
+|---|---|---|---|---|---|---|
+| fp16 | 146 | 6.68 | 0% | {'FP16': 61} | 16.8% | 0.0% |
+| fp8 | 193 | 6.17 | 0% | {} | 0.6% | 0.0% |
+| int8 | 153 | 3.79 | 100% | {'INT8': 64} | 25.2% | 1.0% |
+
+<details><summary>fp16 最耗时 10 层</summary>
+
+| 层 | 类型 | 精度 | ms |
+|---|---|---|---|
+| `PWN(PWN(/model.0/act/Sigmoid), PWN(/model.0/act/Mul))` | other | FP16 | 0.2878 |
+| `/model.22/cv3.0/cv3.0.0/conv/Conv || /model.22/cv2.0/cv2.0.0/conv/Conv` | conv | FP16 | 0.2728 |
+| `/model.1/conv/Conv + PWN(PWN(/model.1/act/Sigmoid), PWN(/model.1/act/Mul))` | conv | FP16 | 0.2506 |
+| `/model.0/conv/Conv` | conv | FP16 | 0.2183 |
+| `/model.22/cv3.0/cv3.0.1/conv/Conv + PWN(PWN(/model.22/cv3.0/cv3.0.1/act/Sigmoid), PWN(/mod` | conv | FP16 | 0.2006 |
+| `Reformatting CopyNode for Input Tensor 0 to /model.0/conv/Conv` | reformat | FP32 | 0.1982 |
+| `/model.2/cv2/conv/Conv + PWN(PWN(/model.2/cv2/act/Sigmoid), PWN(/model.2/cv2/act/Mul))` | conv | FP16 | 0.1767 |
+| `/model.15/cv1/conv/Conv + PWN(PWN(/model.15/cv1/act/Sigmoid), PWN(/model.15/cv1/act/Mul))` | conv | FP16 | 0.1716 |
+| `/model.3/conv/Conv + PWN(PWN(/model.3/act/Sigmoid), PWN(/model.3/act/Mul))` | conv | FP16 | 0.1484 |
+| `/model.2/cv1/conv/Conv + PWN(PWN(/model.2/cv1/act/Sigmoid), PWN(/model.2/cv1/act/Mul))` | conv | FP16 | 0.1404 |
+
+</details>
+
+<details><summary>fp8 最耗时 10 层</summary>
+
+| 层 | 类型 | 精度 | ms |
+|---|---|---|---|
+| `__myl_SiluIotaMulFlooMaxMinCastReshReplReshReshReplReshConcMulCastGathMulCastConc_myl8_21` | other | FP16 | 0.3285 |
+| `__myl_SiluMulCast_myl0_3` | other | FP16 | 0.2142 |
+| `/model_0/conv/Conv_myl0_2` | other | FP16 | 0.1998 |
+| `/model_22/cv3_0/cv3_0_0/conv/Conv+/model_22/cv2_0/cv2_0_0/conv/Conv_myl8_38` | other | FP8 | 0.1827 |
+| `__myl_ReplReplReplConcReshIotaCastCastIotaCastCastIotaCastCastAddReshReplReshReshReplReshC` | other | FP16 | 0.1782 |
+| `__myl_Cast_myl0_1` | other | FP32 | 0.1671 |
+| `/model_18/m_0/cv1/conv/Conv_myl8_64` | other | FP8 | 0.1569 |
+| `/model_1/conv/Conv_myl0_4` | other | FP8 | 0.1485 |
+| `__myl_SiluIotaMulFlooMaxMinCastReshReplReshReshReplReshConcMulCastGathMulCastConc_myl8_7` | other | FP16 | 0.1467 |
+| `__myl_Slic_myl8_66` | other | FP8 | 0.1387 |
+
+</details>
+
+<details><summary>int8 最耗时 10 层</summary>
+
+| 层 | 类型 | 精度 | ms |
+|---|---|---|---|
+| `images_QuantizeLinear` | reformat | FP32 | 0.1562 |
+| `model.0.conv.weight + model.0.conv.weight_QuantizeLinear + /model.0/conv/Conv + PWN(/model` | conv | INT8 | 0.1319 |
+| `model.1.conv.weight + model.1.conv.weight_QuantizeLinear + /model.1/conv/Conv + PWN(/model` | conv | INT8 | 0.1129 |
+| `model.22.cv3.0.0.conv.weight + model.22.cv3.0.0.conv.weight_QuantizeLinear + /model.22/cv3` | conv | INT8 | 0.1004 |
+| `model.22.cv3.0.1.conv.weight + model.22.cv3.0.1.conv.weight_QuantizeLinear + /model.22/cv3` | conv | INT8 | 0.0987 |
+| `__myl_ReplReplReplConcReshIotaCastCastIotaCastCastIotaCastCastAddReshReplReshReshReplReshC` | other | FP16 | 0.0969 |
+| `model.2.cv2.conv.weight + model.2.cv2.conv.weight_QuantizeLinear + /model.2/cv2/conv/Conv ` | conv | INT8 | 0.0702 |
+| `model.3.conv.weight + model.3.conv.weight_QuantizeLinear + /model.3/conv/Conv + PWN(/model` | conv | INT8 | 0.0648 |
+| `model.2.m.0.cv1.conv.weight + model.2.m.0.cv1.conv.weight_QuantizeLinear + /model.2/m.0/cv` | conv | INT8 | 0.0616 |
+| `model.2.m.0.cv2.conv.weight + model.2.m.0.cv2.conv.weight_QuantizeLinear + /model.2/m.0/cv` | conv | INT8 | 0.0615 |
+
+</details>
+
+## 4. 瓶颈判读
+
+- **fp8** (b8): GPU纯计算 1.38× → 含传输 1.37× → Triton 端到端 1.01×
+  - GPU 内核层面加速已不足 1.5×: 瓶颈在量化覆盖 / kernel。低精度卷积占比 0%, reformat+未融合 Q/DQ 占 0.6% GPU 时间。
+  - 端到端收益明显小于内核收益: 量化省下的 GPU 时间被 GPU 外开销 (FP32 I/O 搬运 / gRPC / 批处理排队) 稀释。
+- **int8** (b8): GPU纯计算 1.87× → 含传输 1.89× → Triton 端到端 1.15×
+  - 端到端收益明显小于内核收益: 量化省下的 GPU 时间被 GPU 外开销 (FP32 I/O 搬运 / gRPC / 批处理排队) 稀释。
+完成 → results/quant/rtx6000-quarter-nc24-summary.md
