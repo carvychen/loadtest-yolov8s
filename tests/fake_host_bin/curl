@@ -1,0 +1,3 @@
+#!/bin/sh
+# 测试用假 curl: Triton 健康检查一律成功
+exit 0

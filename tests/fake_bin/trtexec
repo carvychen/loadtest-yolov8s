@@ -16,7 +16,8 @@ if os.environ.get("FAKE_TRTEXEC_CALLS"):
 opt = {a.split("=", 1)[0]: a.split("=", 1)[1] for a in args if "=" in a}
 
 if "--help" in args:
-    print(f"&&&& RUNNING TensorRT.trtexec [TensorRT v{ver}] [b1] # trtexec --help")
+    # 故意写到 stderr: 调用方必须合并 stderr 才能拿到版本 (旧脚本用的是 2>&1)
+    print(f"&&&& RUNNING TensorRT.trtexec [TensorRT v{ver}] [b1] # trtexec --help", file=sys.stderr)
 elif "--saveEngine" in opt:
     Path(opt["--saveEngine"]).write_bytes(b"fake plan")
     print(f"[I] TensorRT version: {major}.{ver // 100 % 100}.{ver % 100}")

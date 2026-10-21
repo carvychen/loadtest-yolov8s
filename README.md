@@ -97,6 +97,17 @@ SKIP_SWEEP=1 bash run_quant.sh rtx6000-quarter-nc24      # 只要 mAP + trtexec,
 脚本自动识别 TensorRT 10 / 11：TRT 11 已移除弱类型（没有 `--fp16`），FP16 基线改用 ModelOpt AutoCast 生成的 FP16 ONNX。换 TRT 版本时请换 label，避免覆盖结果，例如 `TRITON_TAG=26.09 bash run_quant.sh rtx6000-quarter-nc24-trt11`。
 可调：`VARIANTS`、`BATCHES`（默认 `1 8 32`）、`PROFILE_BATCH`（8）、`DURATION`（每测点秒数，15）、`FP8_CALIB` / `INT8_CALIB`、`TRITON_TAG`（换更新的 TensorRT 版本对比 FP8 kernel 覆盖）。
 
+| 文件 | 在哪跑 | 做什么 |
+|---|---|---|
+| `run_quant.sh` | VM 主机 | 只做容器编排：按步骤调下面的脚本，起 Triton，跑 mAP / perf_analyzer |
+| `variants.py` | 被其余脚本 import | 变体名的全部规则：量化参数、ONNX 文件、TRT 10 / 11 构建参数、Triton 模型名；拼错直接报错 |
+| `trtexec.py` | 被 `bench_trtexec.py` import | TRT 版本 → 测速 / profile 参数；trtexec 日志 → 吞吐与 GPU 计算时间 |
+| `prepare_variants.py` | 量化容器（CPU） | AutoCast FP16 ONNX、ModelOpt 量化、Triton `config.pbtxt` |
+| `bench_trtexec.py` | Triton server 容器（GPU） | 构建引擎 → 两层测速 → 逐层 profile → `<label>-trtexec.csv` |
+| `eval_map.py` / `layer_report.py` / `analyze_quant.py` | 量化容器 | mAP、逐层归因、汇总 `summary.md` |
+
+本地测试（无需 GPU / Docker）：`python3 -m pytest tests`。假 `trtexec` / `docker` 回放真实日志，并与重构前脚本录下的 golden 逐字比对（见 `tests/golden/README.md`）。术语见 `GLOSSARY.md`。
+
 ## 跑完清理（省钱）
 
 ```bash

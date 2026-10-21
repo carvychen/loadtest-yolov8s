@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+"""测试用假 docker: 只记录参数 (工作目录写成 <PWD>) 到 $FAKE_DOCKER_CALLS, 不跑任何容器。"""
+import os
+import shlex
+import sys
+
+with open(os.environ["FAKE_DOCKER_CALLS"], "a") as f:
+    f.write(shlex.join(sys.argv[1:]).replace(os.environ["PWD"], "<PWD>") + "\n")
