@@ -78,3 +78,19 @@ def test_swin_uses_its_own_onnx_and_input_shape(tmp_path):
     assert "--onnx=artifacts/swin_t.fp16.onnx --saveEngine=artifacts/model_repository_q/swin_t_fp16/1/model.plan" in text
     assert "--maxShapes=input:32x3x224x224" in text and "--shapes=input:8x3x224x224" in text
     assert (tmp_path / "results/quant/lbl-trtexec.csv").read_text().count("\n") == 1 + 2 * 2
+
+
+def test_build_failure_skips_that_variant_and_keeps_going(tmp_path, monkeypatch):
+    # 一个变体建不起来 (如 TRT 10.13 上的 fp8-torch) 不应中止整轮: 记下来, 其余照测;
+    # 旧引擎先删掉, 免得 Triton 加载到别的 TRT 版本留下的 plan
+    stale = tmp_path / "artifacts/model_repository_q/yolov8s_fp8/1/model.plan"
+    stale.parent.mkdir(parents=True)
+    stale.write_bytes(b"old")
+    monkeypatch.setenv("FAKE_TRTEXEC_FAIL_BUILD", "yolov8s.fp8.onnx")
+    r, _ = run_bench(tmp_path, 110300, ["fp16", "fp8", "int8"])
+    assert r.returncode == 0, r.stdout + r.stderr
+    rows = (tmp_path / "results/quant/lbl-trtexec.csv").read_text().splitlines()[1:]
+    assert {row.split(",")[0] for row in rows} == {"fp16", "int8"}
+    assert not stale.exists()
+    assert (tmp_path / "results/quant/lbl-build-failed.txt").read_text() == "fp8\n"
+    assert "构建失败" in r.stdout

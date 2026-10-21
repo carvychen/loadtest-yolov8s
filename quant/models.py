@@ -36,7 +36,10 @@ MODELS = {m.name: m for m in [
           "model_repository/yolov8s/config.pbtxt", ("nohead", "conv")),
     # 三期: 分类, Transformer (timm swin_tiny_patch4_window7_224.ms_in22k, 21841 类)
     Model("swin_t", "input", (3, 224, 224), "datasets/calib_swin_t_500.npy",
-          "quant/triton_templates/swin_t.pbtxt", ("nomha", "torch")),
+          "quant/triton_templates/swin_t.pbtxt", ("nomha", "torch", "head")),
+    # 同一权重, GELU 改用 tanh 近似导出: 看 TRT 能否把激活重新融合进 FP8 GEMM (erf 版 FP8 下 GELU 成了独立 kernel)
+    Model("swin_t_tanh", "input", (3, 224, 224), "datasets/calib_swin_t_500.npy",
+          "quant/triton_templates/swin_t.pbtxt", ("nomha", "head")),
 ]}
 
 

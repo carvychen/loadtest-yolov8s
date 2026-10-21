@@ -14,8 +14,9 @@ TIMM_NAME = "swin_tiny_patch4_window7_224.ms_in22k"
 NUM_CLASSES = 21841
 
 
-def build_model():
-    """timm Swin-T + 官方 22K 权重 (本地没有就从官方 release 下载), eval 模式, FP32, CPU。"""
+def build_model(gelu="none"):
+    """timm Swin-T + 官方 22K 权重 (本地没有就从官方 release 下载), eval 模式, FP32, CPU。
+    gelu="tanh": 把 GELU 换成 tanh 近似 (同一权重, swin_t_tanh 模型用)。"""
     import timm
     import torch
     from timm.models.swin_transformer import checkpoint_filter_fn
@@ -27,6 +28,10 @@ def build_model():
     model = timm.create_model(TIMM_NAME, pretrained=False, num_classes=NUM_CLASSES)
     sd = torch.load(CKPT, map_location="cpu")
     model.load_state_dict(checkpoint_filter_fn(sd.get("model", sd), model))
+    if gelu != "none":
+        for mod in model.modules():
+            if isinstance(mod, torch.nn.GELU):
+                mod.approximate = gelu
     return model.eval()
 
 
@@ -44,13 +49,17 @@ def preprocess(tf, path):
     return tf(Image.open(path).convert("RGB")).numpy()
 
 
-def export_onnx(out="artifacts/swin_t.onnx"):
+GELU = {"swin_t": "none", "swin_t_tanh": "tanh"}   # 模型名 -> GELU 写法
+
+
+def export_onnx(name="swin_t"):
     """导出 FP32 ONNX (opset 17, 动态 batch), 并用 onnxruntime 对比 PyTorch 输出确认导出无误。"""
     import numpy as np
     import onnxruntime as ort
     import torch
 
-    model = build_model()
+    out = f"artifacts/{name}.onnx"
+    model = build_model(GELU[name])
     x = torch.randn(2, 3, 224, 224)
     torch.onnx.export(model, x, out, input_names=["input"], output_names=["logits"], opset_version=17,
                       dynamic_axes={"input": {0: "batch"}, "logits": {0: "batch"}}, dynamo=False)
@@ -64,11 +73,13 @@ def export_onnx(out="artifacts/swin_t.onnx"):
 
 
 if __name__ == "__main__":
-    # 用法 (仓库根目录下): python quant/swin.py export   (已存在则跳过)
-    import sys
-    if sys.argv[1:2] != ["export"]:
-        sys.exit("用法: python quant/swin.py export")
-    if os.path.exists("artifacts/swin_t.onnx"):
-        print("已存在 artifacts/swin_t.onnx, 跳过")
+    # 用法 (仓库根目录下): python quant/swin.py export [--model swin_t|swin_t_tanh]   (已存在则跳过)
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("cmd", choices=["export"])
+    ap.add_argument("--model", default="swin_t", choices=list(GELU))
+    a = ap.parse_args()
+    if os.path.exists(f"artifacts/{a.model}.onnx"):
+        print(f"已存在 artifacts/{a.model}.onnx, 跳过")
     else:
-        export_onnx()
+        export_onnx(a.model)

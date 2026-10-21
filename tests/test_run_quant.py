@@ -90,3 +90,18 @@ def test_swin_orchestration(tmp_path):
     assert f"{QRUN} {QIMG} python quant/swin.py export" in text
     assert "python quant/eval_agreement.py --label lbl --model swin_t fp16 fp8 fp16-opt5 fp8-nomha\n" in text
     assert "eval_map.py" not in text and "run_sweep.sh" not in text
+
+
+def test_variants_that_failed_to_build_are_not_loaded_or_evaluated(tmp_path):
+    shutil.copy(REPO / "run_quant.sh", tmp_path)
+    (tmp_path / "results/quant").mkdir(parents=True)
+    (tmp_path / "results/quant/lbl-build-failed.txt").write_text("fp8-torch\n")   # bench_trtexec.py 写的
+    calls = tmp_path / "docker_calls.txt"
+    env = dict(os.environ, PATH=f"{REPO / 'tests/fake_host_bin'}{os.pathsep}{os.environ['PATH']}",
+               FAKE_DOCKER_CALLS=str(calls), VARIANTS="fp16 fp8 fp8-torch", MODEL="swin_t", PWD=str(tmp_path))
+    r = subprocess.run(["bash", "run_quant.sh", "lbl"], cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    text = calls.read_text()
+    assert "--load-model=swin_t_fp16 --load-model=swin_t_fp8\n" in text
+    assert "eval_agreement.py --label lbl --model swin_t fp16 fp8\n" in text
+    assert "fp8-torch" in r.stdout   # 提示哪些变体被跳过

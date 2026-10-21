@@ -138,3 +138,16 @@ def test_torch_tag_switches_to_modelopt_torch_path():
 def test_tags_must_fit_the_model(name, model, hint):
     with pytest.raises(ValueError, match=hint):
         Variant.parse(name, model=model)
+
+
+def test_head_tag_quantizes_classifier_with_deployment_batch_shape():
+    # ModelOpt 默认按 batch 1 推理找 GEMV, 把分类头当矩阵向量乘排除; 按 batch 8 的形状判断就会量化它
+    cmd = Variant.parse("fp8-head", model="swin_t").quantize_cmd()
+    assert cmd[-1] == "--calibration_shapes=input:8x3x224x224"
+    assert Variant.parse("fp8-head", model="swin_t").onnx_path() == "artifacts/swin_t.fp8-head.onnx"
+
+
+def test_tanh_gelu_swin_is_its_own_model_sharing_calibration_set():
+    v = Variant.parse("fp8-head", model="swin_t_tanh")
+    assert v.onnx_path() == "artifacts/swin_t_tanh.fp8-head.onnx" and v.triton_name == "swin_t_tanh_fp8-head"
+    assert v.model.calib == "datasets/calib_swin_t_500.npy" and v.model.shape(1) == "input:1x3x224x224"

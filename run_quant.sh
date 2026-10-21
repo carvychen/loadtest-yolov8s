@@ -30,7 +30,7 @@ qrun "$QIMG" python quant/variants.py check --model "$MODEL" $VARIANTS   # 变�
 echo "[2/7] COCO val2017 + 校准集 (500 张, 与 4500 张评测集不重叠)"
 qrun "$QIMG" python quant/fetch_coco.py
 # Swin: 官方 22K 权重 (缺则下载) -> FP32 ONNX, 导出后用 onnxruntime 对比 PyTorch 输出
-[ "$MODEL" != swin_t ] || qrun "$QIMG" python quant/swin.py export
+[[ "$MODEL" != swin_t* ]] || qrun "$QIMG" python quant/swin.py export --model "$MODEL"
 qrun "$QIMG" python quant/prep_calib.py --model "$MODEL"     # 已存在则跳过
 
 echo "[3/7] ModelOpt 量化 -> artifacts/${MODEL}.<variant>.onnx + Triton 配置 (Q/DQ ONNX 与 GPU 无关, 已存在则跳过)"
@@ -41,10 +41,16 @@ docker run --gpus all --rm -v "$PWD":/work -w /work \
   -e BATCHES -e PROFILE_BATCH -e DURATION \
   "$SERVER" python3 quant/bench_trtexec.py --model "$MODEL" "$LABEL" $VARIANTS
 
+# 构建失败的变体 (bench_trtexec.py 记在 <label>-build-failed.txt) 不加载、不评测
+BUILT=""
+for v in $VARIANTS; do grep -qx -- "$v" "$OUT/${LABEL}-build-failed.txt" 2>/dev/null || BUILT+=" $v"; done
+[ -n "${BUILT// /}" ] || { echo "!! 所有变体都构建失败, 见 $OUT/${LABEL}-*-build.log"; exit 1; }
+[ ! -s "$OUT/${LABEL}-build-failed.txt" ] || echo "!! 跳过构建失败的变体: $(tr '\n' ' ' < "$OUT/${LABEL}-build-failed.txt")"
+
 echo "[5/7] 启动 Triton (加载全部精度变体)"
 cleanup
 # 只加载本次的变体: 模型目录里还留着别的模型 / 别的 TRT 版本建的引擎, 默认全量加载会因版本不符而起不来
-LOADS=(); for v in $VARIANTS; do LOADS+=("--load-model=${MODEL}_${v}"); done
+LOADS=(); for v in $BUILT; do LOADS+=("--load-model=${MODEL}_${v}"); done
 docker run --gpus all -d --rm --name triton-q --net host \
   -v "$PWD/artifacts/model_repository_q":/models "$SERVER" \
   tritonserver --model-repository=/models --model-control-mode=explicit "${LOADS[@]}" >/dev/null
@@ -54,7 +60,7 @@ for i in $(seq 1 90); do
   echo -n "."; sleep 2
   if [ "$i" = 90 ]; then echo " 超时"; docker logs triton-q | tail -40; exit 1; fi
 done
-for v in $VARIANTS; do
+for v in $BUILT; do
   curl -sf "localhost:8000/v2/models/${MODEL}_${v}/ready" >/dev/null \
     || { echo "${MODEL}_${v} 未就绪"; docker logs triton-q | tail -40; exit 1; }
 done
@@ -63,13 +69,13 @@ if [ "${SKIP_MAP:-0}" = 1 ]; then
   echo "[6/7] 跳过精度评测 (SKIP_MAP=1)"
 elif [ "$MODEL" = yolov8s ]; then
   echo "[6/7] COCO mAP (每个变体 4500 张)"
-  for v in $VARIANTS; do
+  for v in $BUILT; do
     docker run --rm --net host -v "$PWD":/work -w /work "$QIMG" \
       python quant/eval_map.py --model "yolov8s_${v}" --out "$OUT/${LABEL}-${v}-map.json"
   done
-elif [[ " $VARIANTS " == *" fp16 "* ]]; then
+elif [[ "$BUILT " == *" fp16 "* ]]; then
   echo "[6/7] 输出一致性 (4500 张, 各变体 vs FP16)"
-  others=(); for v in $VARIANTS; do [ "$v" = fp16 ] || others+=("$v"); done   # fp16 作参照放第一个
+  others=(); for v in $BUILT; do [ "$v" = fp16 ] || others+=("$v"); done   # fp16 作参照放第一个
   docker run --rm --net host -v "$PWD":/work -w /work "$QIMG" \
     python quant/eval_agreement.py --label "$LABEL" --model "$MODEL" fp16 "${others[@]}"
 else
@@ -80,7 +86,7 @@ if [ "$MODEL" != yolov8s ]; then
   echo "[7/7] 跳过并发扫描 ($MODEL 只测 GPU 侧)"
 elif [ "${SKIP_SWEEP:-0}" != 1 ]; then
   echo "[7/7] perf_analyzer 并发扫描 (与一期同口径: 1→32, p99 SLA)"
-  for v in $VARIANTS; do
+  for v in $BUILT; do
     docker run --rm --net host -v "$PWD":/work -w /work \
       -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL="yolov8s_${v}" -e OUTDIR="$OUT" \
       "$SDK" bash serving/run_sweep.sh "${LABEL}-${v}"

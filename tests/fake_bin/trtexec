@@ -19,6 +19,10 @@ if "--help" in args:
     # 故意写到 stderr: 调用方必须合并 stderr 才能拿到版本 (旧脚本用的是 2>&1)
     print(f"&&&& RUNNING TensorRT.trtexec [TensorRT v{ver}] [b1] # trtexec --help", file=sys.stderr)
 elif "--saveEngine" in opt:
+    fail = os.environ.get("FAKE_TRTEXEC_FAIL_BUILD")   # 构建时 --onnx 含这个子串就模拟构建失败
+    if fail and fail in opt["--onnx"]:
+        print("[E] Error[10]: Could not find any implementation for node (模拟)")
+        sys.exit(1)
     Path(opt["--saveEngine"]).write_bytes(b"fake plan")
     print(f"[I] TensorRT version: {major}.{ver // 100 % 100}.{ver % 100}")
 elif "--exportProfile" in opt:

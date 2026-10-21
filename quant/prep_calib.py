@@ -21,7 +21,7 @@ m = models.get(ap.parse_args().model)
 if os.path.exists(m.calib):
     print(f"已存在 {m.calib}, 跳过")
     raise SystemExit
-if m.name == "swin_t":
+if m.name.startswith("swin_t"):   # swin_t / swin_t_tanh 共用一份 (预处理与 GELU 写法无关)
     import swin
     tf = swin.transform(swin.build_model())
     prep = lambda i: swin.preprocess(tf, img_path(i))

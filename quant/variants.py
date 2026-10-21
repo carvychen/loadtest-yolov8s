@@ -6,11 +6,14 @@ import models
 from models import Model
 # FP8 用 max (E4M3 动态范围大, NVIDIA 推荐); INT8 用 entropy (TensorRT 经典 CNN 口径)
 CALIBRATION = {"fp8": "max", "int8": "entropy"}
-# 量化标签: 改变 Q/DQ ONNX (值 = 追加的 ModelOpt ONNX PTQ 参数)。字典顺序 = ONNX 文件名里的标签顺序
+# 量化标签: 改变 Q/DQ ONNX (值 = 追加的 ModelOpt ONNX PTQ 参数, 或按模型生成参数的函数)。字典顺序 = ONNX 文件名里的标签顺序
 QUANT_TAGS = {
     "nohead": ["--nodes_to_exclude", r"/model\.22/.*"],   # YOLO: 检测头 model.22 不量化
     "conv": ["--op_types_to_quantize", "Conv"],           # YOLO: 只量化 Conv (不量化残差 Add)
     "nomha": ["--disable_mha_qdq"],                       # 注意力的两个 BMM (QK^T / ·V) 不加 Q/DQ, 留 FP16
+    # 分类头也量化: ModelOpt 默认按 batch 1 推理找 GEMV (m 或 n 为 1), 把分类头 Gemm 当矩阵向量乘排除;
+    # 改按部署的 batch 8 做形状推断, 分类头就是普通 GEMM
+    "head": lambda m: [f"--calibration_shapes={m.shape(8)}"],
     "torch": None,                                        # 不走 ONNX PTQ: modelopt.torch 量化后导出 (swin_torch_quant.py)
 }
 # 构建标签: 同一 ONNX, 只改 trtexec 构建参数
@@ -84,7 +87,8 @@ class Variant:
                 f"--quantize_mode={self.precision}", f"--calibration_data_path={self.model.calib}",
                 f"--calibration_method={method}", "--calibration_eps", "cpu", f"--output_path={self.onnx_path()}"]
         for t in self.quant_tags:
-            args += QUANT_TAGS[t]
+            extra = QUANT_TAGS[t]
+            args += extra(self.model) if callable(extra) else extra
         return args
 
     def build_flags(self, trt_major):

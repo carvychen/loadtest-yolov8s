@@ -75,7 +75,7 @@ def write_configs(variants, io_types=read_io_types):
         tpl = Path(v.model.triton_template).read_text()
         # 此时还不知道 TRT 版本; fp16 的两份 ONNX (原 FP32 / AutoCast --keep_io_types) I/O 一样都是 FP32, 取哪份都行
         t_in, t_out = io_types(v.onnx_path(trt_major=10))
-        cfg = tpl.replace(f'name: "{v.model.name}"', f'name: "{v.triton_name}"', 1)
+        cfg = re.sub(r'^name: "[^"]*"', f'name: "{v.triton_name}"', tpl, count=1, flags=re.M)
         types = iter([t_in, t_out])                      # 模板里先 input 后 output
         cfg = re.sub(r"data_type: TYPE_\w+", lambda m: f"data_type: {next(types)}", cfg)
         Path(v.model_dir, "1").mkdir(parents=True, exist_ok=True)

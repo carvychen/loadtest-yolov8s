@@ -83,6 +83,7 @@ def main():
     csv.write_text(CSV_HEADER + "\n")
 
     env_has_build_ver = False
+    failed = []
     for v in variants:
         plan = f"{v.model_dir}/1/model.plan"
         onnx = v.onnx_path(major)
@@ -90,6 +91,7 @@ def main():
         if not Path(onnx).exists():
             sys.exit(f"缺少 {onnx}, 先跑量化步骤")
         Path(plan).parent.mkdir(parents=True, exist_ok=True)
+        Path(plan).unlink(missing_ok=True)   # 先删旧引擎: 构建失败时不留下别的 TRT 版本的 plan 让 Triton 误加载
         prefix = OUT / f"{a.label}-{v.name}"
 
         print(f"== [{v.name}] 构建引擎 ({onnx} {' '.join(flags)}) ==")
@@ -98,7 +100,11 @@ def main():
                     f"--minShapes={shape(1)}", f"--optShapes={shape(8)}",
                     f"--maxShapes={shape(32)}",
                     "--memPoolSize=workspace:4096", "--profilingVerbosity=detailed"], build_log):
-            fail(f"[{v.name}] 构建失败, 见 {build_log}", build_log, 20)
+            # 不中止整轮 (如 TRT 10.13 构建 fp8-torch 触发 Myelin 内部错误): 记下来, 其余变体照测
+            print(f"!! [{v.name}] 构建失败, 跳过该变体, 见 {build_log}")
+            tail(build_log, 20)
+            failed.append(v.name)
+            continue
         print(f"== [{v.name}] 引擎已生成 ({Path(plan).stat().st_size / 2**20:.0f}M), 开始测速 ==")
         built = trtexec.parse_build_version(Path(build_log).read_text(errors="replace"))
         if built and not env_has_build_ver:   # 所有变体同一 TensorRT, 只记一次
@@ -130,6 +136,12 @@ def main():
                     f"--exportProfile={prefix}-profile.json", f"--exportLayerInfo={prefix}-layers.json"], plog):
             print(f"!! [{v.name}] 逐层 profile 失败 (不影响测速结果), 见 {plog}")
             tail(plog, 15)
+    failed_txt = OUT / f"{a.label}-build-failed.txt"   # run_quant.sh 据此不加载 / 不评测这些变体
+    if failed:
+        failed_txt.write_text("".join(n + "\n" for n in failed))
+        print(f"!! 构建失败的变体: {' '.join(failed)} (见 {failed_txt})")
+    else:
+        failed_txt.unlink(missing_ok=True)
     print(f"trtexec 完成 -> {csv}")
 
 

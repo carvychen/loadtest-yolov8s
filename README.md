@@ -142,6 +142,20 @@ TRITON_TAG=25.08 MODEL=swin_t VARIANTS="fp16 fp8 fp8-nomha fp8-torch" PUSH_RESUL
 | `fp8-nomha` | `--disable_mha_qdq`：注意力 BMM 全部留 FP16 | 注意力 FP8 贡献多少 |
 | `fp8-torch` | modelopt.torch 量化后导出（NVIDIA 示例推荐的 Swin 路径；I/O 为 FP16） | 换官方推荐路径是否更快 |
 
+第二轮（针对第一轮找到的两处损失；TRT 两个版本表现一致，只测最新的 11.3）：
+
+```bash
+TRITON_TAG=26.09 MODEL=swin_t      VARIANTS="fp16 fp8 fp8-head" PUSH_RESULTS=1 bash run_quant.sh rtx6000-quarter-nc24-trt11-swin-r2
+TRITON_TAG=26.09 MODEL=swin_t_tanh VARIANTS="fp16 fp8 fp8-head" PUSH_RESULTS=1 bash run_quant.sh rtx6000-quarter-nc24-trt11-swin-tanh
+```
+
+| 变体 / 模型 | 做法 | 回答什么 |
+|---|---|---|
+| `fp8-head` | `--calibration_shapes=input:8x3x224x224` | ModelOpt 默认按 batch 1 找 GEMV，把 21841 类分类头当矩阵向量乘排除；按部署 batch 判断后分类头也量化 |
+| `MODEL=swin_t_tanh` | 同一权重，GELU 改 tanh 近似导出（FP32 下与 erf 版 logits 余弦 ≥ 0.99999） | FP8 下 fc1 与 GELU 的融合断开（GELU 成独立 kernel，约占 FP8 GPU 时间 9%），换写法能否重新融合 |
+
+某个变体构建失败时不再中止整轮：记在 `<label>-build-failed.txt`，其余变体照常测速和评测。
+
 模型用 timm 加载官方 22K 权重（`quant/swin.py`，缺则从官方 release 下载）；校准 500 张 COCO 图片（timm 预处理）；精度 = 4500 张上各变体与 FP16 引擎输出的一致性（`quant/eval_agreement.py`：top-1 一致率、top-5 重合率、logits 余弦）。只测 GPU 侧，不做 perf_analyzer 扫描。
 
 ## 跑完清理（省钱）
