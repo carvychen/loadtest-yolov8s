@@ -1,0 +1,4 @@
+label=rtx6000-quarter-nc24-trt10-swin
+NVIDIA RTX Pro 6000 Blackwell DC-1-24Q, 595.58.03, [Insufficient Permissions]
+TensorRT v101302
+TensorRT version: 10.13.2
