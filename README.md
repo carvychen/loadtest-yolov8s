@@ -22,7 +22,7 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 setup.sh · run.sh · run_quant.sh   入口: 环境准备 / 一期选型压测 / 二期量化实验
 serving/        一期 · Triton FP16 选型压测: export_onnx.py, build_engine.sh, run_sweep.sh, analyze.py
 quant/          二期 · FP8/INT8 量化 (见下方二期一节的文件表) + 量化镜像 Dockerfile
-reports/        Word 报告: report.docx (一期) / report_fp8.docx (二期) 及生成脚本
+reports/        Word 报告: report.docx (一期) / report_fp8.docx (二期) / report_swin.docx (三期) 及生成脚本
 model_repository/  一期 Triton 模型配置 (config.pbtxt 入库, 引擎不入库)
 results/        实验数据 (入库): 一期 <label>.csv, 二期 quant/<label>-*
 tests/          本地测试 (无需 GPU / Docker)
