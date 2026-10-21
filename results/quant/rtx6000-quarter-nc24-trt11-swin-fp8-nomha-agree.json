@@ -1,0 +1,10 @@
+{
+  "model": "swin_t_fp8-nomha",
+  "reference": "swin_t_fp16",
+  "n_images": 4500,
+  "top1_agree": 0.9084,
+  "top5_overlap": 0.9262,
+  "cos_mean": 0.99308,
+  "cos_min": 0.9121,
+  "total_seconds_all_variants": 51.0
+}
