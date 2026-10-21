@@ -1,0 +1,10 @@
+{
+  "model": "swin_t_fp8",
+  "reference": "swin_t_fp16",
+  "n_images": 4500,
+  "top1_agree": 0.88,
+  "top5_overlap": 0.9059,
+  "cos_mean": 0.98909,
+  "cos_min": 0.88165,
+  "total_seconds_all_variants": 38.6
+}
