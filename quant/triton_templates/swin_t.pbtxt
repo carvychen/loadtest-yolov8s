@@ -1,0 +1,31 @@
+name: "swin_t"
+platform: "tensorrt_plan"
+max_batch_size: 32
+
+input [
+  {
+    name: "input"
+    data_type: TYPE_FP32
+    dims: [ 3, 224, 224 ]
+  }
+]
+output [
+  {
+    name: "logits"
+    data_type: TYPE_FP32
+    dims: [ 21841 ]
+  }
+]
+
+# 三期只用 Triton 加载真实引擎做 FP8 / FP16 输出一致性评测, 不压测; 动态批处理参数沿用 YOLO 模板
+dynamic_batching {
+  preferred_batch_size: [ 4, 8 ]
+  max_queue_delay_microseconds: 100
+}
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_GPU
+  }
+]

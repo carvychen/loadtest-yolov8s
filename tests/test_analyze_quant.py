@@ -20,3 +20,17 @@ def test_summary_without_fp16_baseline_does_not_crash(tmp_path):
                        cwd=tmp_path, capture_output=True, text=True)
     assert r.returncode == 0, r.stderr
     assert "1987 (—)" in r.stdout and "没有 fp16 基线" in r.stdout
+
+
+def test_swin_summary_uses_agreement_and_skips_cnn_judgement(tmp_path):
+    out = tmp_path / "results/quant"
+    out.mkdir(parents=True)
+    (out / "lbl-trtexec.csv").write_text(HEADER + "fp16,8,compute,100,800,10,10\nfp16,8,transfer,90,720,11,11\n"
+                                                  "fp8,8,compute,115,920,8.7,8.8\nfp8,8,transfer,104,832,9.6,9.7\n")
+    (out / "lbl-fp8-agree.json").write_text('{"top1_agree": 0.9812, "top5_overlap": 0.9644, "cos_mean": 0.99871, "cos_min": 0.981}')
+    r = subprocess.run([sys.executable, str(REPO / "quant/analyze_quant.py"), "--model", "swin_t", "--label", "lbl"],
+                       cwd=tmp_path, capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    assert r.stdout.startswith("# Swin-T 量化实验: lbl")
+    assert "| fp8 | 98.12% | 96.44% | 0.99871 / 0.98100 |" in r.stdout
+    assert "瓶颈在量化覆盖" not in r.stdout and "GPU纯计算 1.15×" in r.stdout

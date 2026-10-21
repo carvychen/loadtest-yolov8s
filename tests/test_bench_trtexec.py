@@ -62,3 +62,19 @@ def test_empty_env_falls_back_to_defaults(tmp_path, monkeypatch):
 def test_missing_onnx_is_reported(tmp_path):
     r, _ = run_bench(tmp_path, 110300, ["int8"], missing_onnx=["yolov8s.int8.onnx"])
     assert r.returncode != 0 and "artifacts/yolov8s.int8.onnx" in r.stdout + r.stderr
+
+
+def test_swin_uses_its_own_onnx_and_input_shape(tmp_path):
+    (tmp_path / "artifacts").mkdir()
+    for f in ("swin_t.onnx", "swin_t.fp16.onnx", "swin_t.fp8.onnx"):
+        (tmp_path / "artifacts" / f).touch()
+    calls = tmp_path / "calls.txt"
+    env = dict(os.environ, PATH=f"{REPO / 'tests/fake_bin'}{os.pathsep}{os.environ['PATH']}",
+               FAKE_TRT_VER="110300", FAKE_TRTEXEC_CALLS=str(calls), BATCHES="8")
+    r = subprocess.run([sys.executable, str(REPO / "quant/bench_trtexec.py"), "--model", "swin_t", "lbl", "fp16", "fp8"],
+                       cwd=tmp_path, env=env, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    text = calls.read_text()
+    assert "--onnx=artifacts/swin_t.fp16.onnx --saveEngine=artifacts/model_repository_q/swin_t_fp16/1/model.plan" in text
+    assert "--maxShapes=input:32x3x224x224" in text and "--shapes=input:8x3x224x224" in text
+    assert (tmp_path / "results/quant/lbl-trtexec.csv").read_text().count("\n") == 1 + 2 * 2

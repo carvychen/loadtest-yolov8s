@@ -7,7 +7,7 @@
 再往外一层 (gRPC / 预处理 / 动态批处理) 由 Triton + perf_analyzer 测, 见 run_quant.sh。
 各变体的 ONNX 与精度参数见 variants.Variant; 一律 --profilingVerbosity=detailed (不影响性能, 逐层报告需要它)。
 
-用法 (仓库根目录下): python3 quant/bench_trtexec.py <gpu-label> <变体...>   (环境变量 BATCHES / PROFILE_BATCH / DURATION 可调)
+用法 (仓库根目录下): python3 quant/bench_trtexec.py [--model M] <gpu-label> <变体...>   (环境变量 BATCHES / PROFILE_BATCH / DURATION 可调)
 产物 (results/quant/): <label>-trtexec.csv, <label>-env.txt, 每个变体 / batch / 层的 .log, -profile.json, -layers.json
 """
 import argparse
@@ -22,7 +22,6 @@ from variants import parse_all
 
 OUT = Path("results/quant")
 CSV_HEADER = "variant,batch,mode,infer_per_s,img_per_s,gpu_compute_mean_ms,gpu_compute_p99_ms"
-SHAPE = "images:{}x3x640x640"
 # 可用环境变量覆盖 (空值按默认); run_quant.sh 用 docker -e 透传
 BATCHES = (os.environ.get("BATCHES") or "1 8 32").split()
 PROFILE_BATCH = os.environ.get("PROFILE_BATCH") or "8"
@@ -55,10 +54,12 @@ def fail(msg, log, n):
 def main():
     sys.stdout.reconfigure(line_buffering=True)   # docker 不带 -t 时 stdout 是管道, 否则进度会攒成大块才显示
     p = argparse.ArgumentParser()
+    p.add_argument("--model", default="yolov8s")
     p.add_argument("label")
     p.add_argument("variants", nargs="+")
     a = p.parse_args()
-    variants = parse_all(a.variants)
+    variants = parse_all(a.variants, a.model)
+    shape = variants[0].model.shape
 
     exe = find_trtexec()
     help_text = subprocess.run([exe, "--help"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True).stdout
@@ -94,8 +95,8 @@ def main():
         print(f"== [{v.name}] 构建引擎 ({onnx} {' '.join(flags)}) ==")
         build_log = f"{prefix}-build.log"
         if not run([exe, f"--onnx={onnx}", f"--saveEngine={plan}", *flags,
-                    f"--minShapes={SHAPE.format(1)}", f"--optShapes={SHAPE.format(8)}",
-                    f"--maxShapes={SHAPE.format(32)}",
+                    f"--minShapes={shape(1)}", f"--optShapes={shape(8)}",
+                    f"--maxShapes={shape(32)}",
                     "--memPoolSize=workspace:4096", "--profilingVerbosity=detailed"], build_log):
             fail(f"[{v.name}] 构建失败, 见 {build_log}", build_log, 20)
         print(f"== [{v.name}] 引擎已生成 ({Path(plan).stat().st_size / 2**20:.0f}M), 开始测速 ==")
@@ -108,7 +109,7 @@ def main():
         for b in BATCHES:
             for mode in ("compute", "transfer"):
                 rlog = f"{prefix}-b{b}-{mode}.log"
-                if not run([exe, f"--loadEngine={plan}", f"--shapes={SHAPE.format(b)}",
+                if not run([exe, f"--loadEngine={plan}", f"--shapes={shape(b)}",
                             "--warmUp=2000", f"--duration={DURATION}", *trtexec.measure_flags(major, mode)], rlog):
                     fail(f"!! [{v.name} b{b} {mode}] trtexec 运行失败, 日志 {rlog} 末尾:", rlog, 25)
                 try:
@@ -123,7 +124,7 @@ def main():
 
         print(f"== [{v.name}] 逐层 profile (batch {PROFILE_BATCH}) ==")
         plog = f"{prefix}-profile.log"
-        if not run([exe, f"--loadEngine={plan}", f"--shapes={SHAPE.format(PROFILE_BATCH)}",
+        if not run([exe, f"--loadEngine={plan}", f"--shapes={shape(PROFILE_BATCH)}",
                     *trtexec.profile_flags(major), "--warmUp=1000", "--duration=5",
                     "--profilingVerbosity=detailed", "--dumpProfile",
                     f"--exportProfile={prefix}-profile.json", f"--exportLayerInfo={prefix}-layers.json"], plog):

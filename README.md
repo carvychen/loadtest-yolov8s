@@ -122,8 +122,27 @@ SKIP_SWEEP=1 bash run_quant.sh rtx6000-quarter-nc24      # 只要 mAP + trtexec,
 | `bench_trtexec.py` | Triton server 容器（GPU） | 构建引擎 → 两层测速 → 逐层 profile → `<label>-trtexec.csv` |
 | `eval_map.py` / `layer_report.py` / `analyze_quant.py` | 量化容器 | mAP、逐层归因、汇总 `summary.md` |
 | `fetch_coco.py` / `prep_calib.py` / `quant_common.py` | 量化容器 | COCO 下载、校准集、共用的预处理与数据集划分 |
+| `models.py` | 被其余脚本 import | 被测模型：文件名、输入张量、校准集、Triton 模板、可用的量化标签（`yolov8s` / `swin_t`） |
+| `swin.py` / `swin_torch_quant.py` / `eval_agreement.py` | 量化容器 | 三期 Swin：导出与预处理、torch 量化路径、FP8 vs FP16 输出一致性 |
 
 本地测试（无需 GPU / Docker）：`python3 -m pytest tests`。假 `trtexec` / `docker` 回放真实日志，并与重构前脚本录下的 golden 逐字比对（见 `tests/golden/README.md`）。术语见 `GLOSSARY.md`。
+
+## 三期 · Swin Transformer FP8（RTX PRO 6000）
+
+背景：客户确认 YOLO 的 1.5 倍与我们一致，但 Swin-T（`swin_tiny_patch4_window7_224_22k`）FP8 只提升 10–20%。同一套流程加 `MODEL=swin_t`：
+
+```bash
+TRITON_TAG=26.09 MODEL=swin_t VARIANTS="fp16 fp8 fp8-nomha fp8-torch" PUSH_RESULTS=1 bash run_quant.sh rtx6000-quarter-nc24-trt11-swin
+TRITON_TAG=25.08 MODEL=swin_t VARIANTS="fp16 fp8 fp8-nomha fp8-torch" PUSH_RESULTS=1 bash run_quant.sh rtx6000-quarter-nc24-trt10-swin
+```
+
+| 变体 | 做法 | 回答什么 |
+|---|---|---|
+| `fp8` | ModelOpt ONNX PTQ 默认（客户最可能的做法） | 能否复现 10–20%；默认只量化 7/12 个块的注意力（移位窗口块多一个 mask Add，ModelOpt 认不出 MHA） |
+| `fp8-nomha` | `--disable_mha_qdq`：注意力 BMM 全部留 FP16 | 注意力 FP8 贡献多少 |
+| `fp8-torch` | modelopt.torch 量化后导出（NVIDIA 示例推荐的 Swin 路径；I/O 为 FP16） | 换官方推荐路径是否更快 |
+
+模型用 timm 加载官方 22K 权重（`quant/swin.py`，缺则从官方 release 下载）；校准 500 张 COCO 图片（timm 预处理）；精度 = 4500 张上各变体与 FP16 引擎输出的一致性（`quant/eval_agreement.py`：top-1 一致率、top-5 重合率、logits 余弦）。只测 GPU 侧，不做 perf_analyzer 扫描。
 
 ## 跑完清理（省钱）
 

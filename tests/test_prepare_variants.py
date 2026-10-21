@@ -26,7 +26,7 @@ def workdir(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     shutil.copytree(REPO / "model_repository", "model_repository")
     Path("datasets").mkdir()
-    Path("datasets/autocast_calib.npz").touch()   # 已存在则不重新生成 (生成要 numpy + 校准集)
+    Path("datasets/autocast_calib_yolov8s.npz").touch()   # 已存在则不重新生成 (生成要 numpy + 校准集)
     Path("artifacts").mkdir()
     Path("artifacts/yolov8s.onnx").touch()
     return tmp_path
@@ -47,7 +47,7 @@ def test_modelopt_commands_match_legacy(workdir):
 
 def test_quantization_without_output_is_an_error(workdir):
     Path("artifacts/yolov8s.fp16.onnx").touch()
-    with pytest.raises(SystemExit, match="quant-fp8.log"):
+    with pytest.raises(SystemExit, match="quant-yolov8s.fp8.log"):
         prepare_variants.quantize([Variant.parse("fp8")], runner=lambda cmd, log: True)
 
 
@@ -58,7 +58,7 @@ def test_modelopt_failure_stops_even_if_output_exists(workdir):
         Path("artifacts/yolov8s.fp8.onnx").touch()
         return False
 
-    with pytest.raises(SystemExit, match="quant-fp8.log"):
+    with pytest.raises(SystemExit, match="quant-yolov8s.fp8.log"):
         prepare_variants.quantize([Variant.parse("fp8")], runner=crashing_runner)
 
 

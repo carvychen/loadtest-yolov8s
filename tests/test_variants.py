@@ -8,11 +8,10 @@ from variants import Variant
 
 REPO = Path(__file__).parent.parent
 
-CALIB = "datasets/calib_500.npy"
-
-
 def modelopt_cmd(name, **kw):
-    return " ".join(Variant.parse(name).modelopt_args(CALIB, **kw))
+    cmd = Variant.parse(name).quantize_cmd(**kw)
+    assert cmd[:2] == ["-m", "modelopt.onnx.quantization"]
+    return " ".join(cmd[2:])
 
 
 def test_plain_fp8_quantizes_with_max_calibration():
@@ -53,14 +52,14 @@ def test_engine_build_depends_on_trt_major(name, trt_major, onnx, flags):
 
 
 def test_fp16_is_not_quantized():
-    assert Variant.parse("fp16").modelopt_args(CALIB) is None
+    assert Variant.parse("fp16").quantize_cmd() is None
     with pytest.raises(ValueError, match="TRT"):   # fp16 的 ONNX 必须指明 TRT 主版本
         Variant.parse("fp16").onnx_path()
 
 
 def test_build_tag_shares_onnx_but_keeps_its_own_triton_model():
     v = Variant.parse("fp8-opt5")
-    assert v.modelopt_args(CALIB) == Variant.parse("fp8").modelopt_args(CALIB)
+    assert v.quantize_cmd() == Variant.parse("fp8").quantize_cmd()
     assert v.model_dir == "artifacts/model_repository_q/yolov8s_fp8-opt5"
 
 
@@ -98,3 +97,44 @@ def test_quant_name_identifies_the_quantized_onnx():
     # 变体名去掉构建标签、量化标签按固定顺序: 同一 quant_name 共用一份 ONNX 与量化日志
     assert Variant.parse("fp8-conv-nohead-opt5").quant_name == "fp8-nohead-conv"
     assert Variant.parse("fp16-opt5").quant_name is None
+
+
+# ── 多模型: 变体都属于某个模型 (默认 yolov8s), 产物名与 Triton 名都带模型名 ──
+
+def test_swin_variant_paths_and_shapes():
+    v = Variant.parse("fp8", model="swin_t")
+    assert v.onnx_path() == "artifacts/swin_t.fp8.onnx"
+    assert v.onnx_path(10) == "artifacts/swin_t.fp8.onnx"
+    assert Variant.parse("fp16", model="swin_t").onnx_path(11) == "artifacts/swin_t.fp16.onnx"
+    assert v.triton_name == "swin_t_fp8" and v.model_dir == "artifacts/model_repository_q/swin_t_fp8"
+    assert v.model.shape(8) == "input:8x3x224x224"
+    assert Variant.parse("fp8").model.shape(8) == "images:8x3x640x640"
+
+
+def test_swin_onnx_ptq_uses_its_own_calibration_set():
+    assert " ".join(Variant.parse("fp8", model="swin_t").quantize_cmd()) == (
+        "-m modelopt.onnx.quantization --onnx_path=artifacts/swin_t.onnx --quantize_mode=fp8 "
+        "--calibration_data_path=datasets/calib_swin_t_500.npy --calibration_method=max "
+        "--calibration_eps cpu --output_path=artifacts/swin_t.fp8.onnx")
+
+
+def test_nomha_keeps_attention_matmuls_in_high_precision():
+    assert Variant.parse("fp8-nomha", model="swin_t").quantize_cmd()[-1] == "--disable_mha_qdq"
+
+
+def test_torch_tag_switches_to_modelopt_torch_path():
+    cmd = Variant.parse("fp8-torch", model="swin_t").quantize_cmd()
+    assert cmd == ["quant/swin_torch_quant.py", "--calibration_data_path=datasets/calib_swin_t_500.npy",
+                   "--output_path=artifacts/swin_t.fp8-torch.onnx"]
+
+
+@pytest.mark.parametrize("name, model, hint", [
+    ("fp8-nohead", "swin_t", "nohead"),        # 检测头标签只对 YOLO 有意义
+    ("fp8-torch", "yolov8s", "torch"),
+    ("fp8-torch-nomha", "swin_t", "torch"),    # torch 路径自带注意力 Q/DQ 处理, 不能叠加 ONNX PTQ 标签
+    ("int8-torch", "swin_t", "torch"),
+    ("fp8", "resnet50", "resnet50"),
+])
+def test_tags_must_fit_the_model(name, model, hint):
+    with pytest.raises(ValueError, match=hint):
+        Variant.parse(name, model=model)

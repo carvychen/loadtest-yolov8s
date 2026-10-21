@@ -8,7 +8,6 @@
   - 纯计算 >1.5x 但含传输/端到端掉下来 -> 瓶颈在 GPU 外 (FP32 I/O 搬运、gRPC、预处理), 与量化无关
 """
 import argparse
-import glob
 import json
 import os
 import sys
@@ -21,6 +20,7 @@ from analyze import load as load_sweep, summarize as summarize_sweep
 from layer_report import summarize as summarize_layers
 
 D = "results/quant"
+TITLES = {"yolov8s": "YOLOv8s", "swin_t": "Swin-T"}
 
 
 def fmt_x(v, base):
@@ -29,6 +29,7 @@ def fmt_x(v, base):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default="yolov8s")
     ap.add_argument("--label", required=True)
     ap.add_argument("--sla-ms", type=float, default=50.0)
     args = ap.parse_args()
@@ -52,9 +53,26 @@ def main():
             qps[v] = summarize_sweep(v, load_sweep(p), args.sla_ms, None).get("qps_at_sla")
 
     env = open(f"{D}/{L}-env.txt").read().strip().replace("\n", " · ") if os.path.exists(f"{D}/{L}-env.txt") else ""
-    print(f"# YOLOv8s 量化实验: {L}\n\n环境: {env}\n")
+    cnn = args.model == "yolov8s"
+    print(f"# {TITLES.get(args.model, args.model)} 量化实验: {L}\n\n环境: {env}\n")
 
     # ── 1. 精度 ──
+    if not cnn:   # 分类模型: 与 FP16 引擎的输出一致性 (eval_agreement.py)
+        print("## 1. 精度: 与 FP16 引擎的输出一致性 (COCO val2017 4500 张, 与校准集不重叠)\n")
+        print("| 变体 | top-1 一致率 | top-5 重合率 | logits 余弦 (均值 / 最小) |\n|---|---|---|---|")
+        for v in variants:
+            p = f"{D}/{L}-{v}-agree.json"
+            if v == "fp16" or not os.path.exists(p):
+                print(f"| {v} | — | — | — |"); continue
+            a = json.load(open(p))
+            print(f"| {v} | {a['top1_agree']:.2%} | {a['top5_overlap']:.2%} | {a['cos_mean']:.5f} / {a['cos_min']:.5f} |")
+    else:
+        print_map_section(variants, maps)
+
+    print_rest(args, L, te, variants, batches, img, qps, cnn)
+
+
+def print_map_section(variants, maps):
     print("## 1. 精度 (COCO val2017 评测集 4500 张, 与校准集不重叠)\n")
     print("| 变体 | mAP50-95 | ΔmAP50-95 vs FP16 | mAP50 |\n|---|---|---|---|")
     base_map = maps.get("fp16", {}).get("mAP50_95")
@@ -64,6 +82,9 @@ def main():
             print(f"| {v} | — | — | — |"); continue
         d = f"{(m['mAP50_95'] - base_map) * 100:+.2f} pt" if base_map is not None else "—"
         print(f"| {v} | {m['mAP50_95']:.4f} | {d} | {m['mAP50']:.4f} |")
+
+
+def print_rest(args, L, te, variants, batches, img, qps, cnn):
 
     # ── 2. 三层吞吐 ──
     print("\n## 2. 三层吞吐与加速比 (img/s; 括号内为相对 FP16)\n")
@@ -115,13 +136,13 @@ def main():
         parts = [f"GPU纯计算 {sc:.2f}×" if sc else "", f"含传输 {st:.2f}×" if st else "",
                  f"Triton 端到端 {se:.2f}×" if se else ""]
         print(f"- **{v}** (b{bref}): " + " → ".join(p for p in parts if p))
-        if sc and sc < 1.5:
+        if cnn and sc and sc < 1.5:   # 按卷积覆盖率判读只适用于 CNN; Transformer 的逐层归因单独做
             ls = layer_sums.get(v, {})
             print(f"  - GPU 内核层面加速已不足 1.5×: 瓶颈在量化覆盖 / kernel。"
                   f"低精度卷积占比 {ls.get('low_prec_conv_ratio', float('nan')):.0%}, "
                   f"reformat+未融合 Q/DQ 占 {ls.get('time_share', {}).get('reformat', 0) + ls.get('time_share', {}).get('qdq_unfused', 0):.1%} GPU 时间。")
         if sc and se and sc >= 1.2 and se < sc * 0.8:
-            print(f"  - 端到端收益明显小于内核收益: 量化省下的 GPU 时间被 GPU 外开销 (FP32 I/O 搬运 / gRPC / 批处理排队) 稀释。")
+            print("  - 端到端收益明显小于内核收益: 量化省下的 GPU 时间被 GPU 外开销 (FP32 I/O 搬运 / gRPC / 批处理排队) 稀释。")
 
 
 if __name__ == "__main__":
