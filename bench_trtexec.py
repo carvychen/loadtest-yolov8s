@@ -53,6 +53,7 @@ def fail(msg, log, n):
 
 
 def main():
+    sys.stdout.reconfigure(line_buffering=True)   # docker 不带 -t 时 stdout 是管道, 否则进度会攒成大块才显示
     p = argparse.ArgumentParser()
     p.add_argument("label")
     p.add_argument("variants", nargs="+")
@@ -90,14 +91,14 @@ def main():
         Path(plan).parent.mkdir(parents=True, exist_ok=True)
         prefix = OUT / f"{a.label}-{v.name}"
 
-        print(f"== [{v.name}] 构建引擎 ({onnx} {' '.join(flags)}) ==", flush=True)
+        print(f"== [{v.name}] 构建引擎 ({onnx} {' '.join(flags)}) ==")
         build_log = f"{prefix}-build.log"
         if not run([exe, f"--onnx={onnx}", f"--saveEngine={plan}", *flags,
                     f"--minShapes={SHAPE.format(1)}", f"--optShapes={SHAPE.format(8)}",
                     f"--maxShapes={SHAPE.format(32)}",
                     "--memPoolSize=workspace:4096", "--profilingVerbosity=detailed"], build_log):
             fail(f"[{v.name}] 构建失败, 见 {build_log}", build_log, 20)
-        print(f"== [{v.name}] 引擎已生成 ({Path(plan).stat().st_size / 2**20:.0f}M), 开始测速 ==", flush=True)
+        print(f"== [{v.name}] 引擎已生成 ({Path(plan).stat().st_size / 2**20:.0f}M), 开始测速 ==")
         built = trtexec.parse_build_version(Path(build_log).read_text(errors="replace"))
         if built and not env_has_build_ver:   # 所有变体同一 TensorRT, 只记一次
             with open(env_txt, "a") as f:
@@ -116,11 +117,11 @@ def main():
                     fail(f"!! [{v.name} b{b} {mode}] {e}, 日志 {rlog} 末尾:", rlog, 25)
                 row = ",".join([v.name, b, mode, m["infer_per_s"], m["img_per_s"],
                                 m["gpu_compute_mean_ms"], m["gpu_compute_p99_ms"]])
-                print(row, flush=True)
+                print(row)
                 with open(csv, "a") as f:
                     f.write(row + "\n")
 
-        print(f"== [{v.name}] 逐层 profile (batch {PROFILE_BATCH}) ==", flush=True)
+        print(f"== [{v.name}] 逐层 profile (batch {PROFILE_BATCH}) ==")
         plog = f"{prefix}-profile.log"
         if not run([exe, f"--loadEngine={plan}", f"--shapes={SHAPE.format(PROFILE_BATCH)}",
                     *trtexec.profile_flags(major), "--warmUp=1000", "--duration=5",

@@ -78,3 +78,13 @@ fi
 cleanup
 qrun "$QIMG" python analyze_quant.py --label "$LABEL" | tee "$OUT/${LABEL}-summary.md"
 echo "完成 → $OUT/${LABEL}-summary.md"
+
+if [ "${PUSH_RESULTS:-0}" = 1 ]; then   # 结果直接经 GitHub 回传 (VM 需有仓库写权限, 如 deploy key)
+  # pathspec 加引号由 git 展开: 只收本 label 的产物, .gitignore 忽略的 .log 自动跳过
+  git add -- "$OUT/${LABEL}-*"
+  if git diff --cached --quiet; then
+    echo "没有新结果可提交"
+  else
+    git commit -qm "结果: ${LABEL}" && git pull -q --rebase && git push -q && echo "已推送 → $(git rev-parse --short HEAD)"
+  fi
+fi

@@ -25,7 +25,6 @@ def tee(cmd, log):
             open(log, "w") as f:
         for line in p.stdout:
             sys.stdout.write(line)
-            sys.stdout.flush()   # docker 不带 -t 时 stdout 是管道, 不刷新会攒成大块才显示
             f.write(line)
     return p.returncode == 0
 
@@ -56,7 +55,7 @@ def quantize(variants, runner=tee):
             print(f"  已存在 {onnx}")
             continue
         args = v.modelopt_args(CALIB, calibration_method=methods[v.precision])
-        print(f"  [{v.quant_name}] {' '.join(args)}", flush=True)
+        print(f"  [{v.quant_name}] {' '.join(args)}")
         log = LOGS / f"quant-{v.quant_name}.log"
         ok = runner([sys.executable, "-m", "modelopt.onnx.quantization", *args], log)
         if not ok or not Path(onnx).exists():
@@ -87,6 +86,7 @@ def write_configs(variants, io_types=read_io_types):
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(line_buffering=True)   # docker 不带 -t 时 stdout 是管道, 否则 ModelOpt 进度会攒成大块才显示
     variants = parse_all(sys.argv[1:])
     quantize(variants)
     write_configs(variants)

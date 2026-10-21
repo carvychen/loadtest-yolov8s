@@ -21,3 +21,6 @@ results/curve.png
 model_repository_q/*/1/*.plan
 model_repository_q/*/config.pbtxt
 results/quant/*.log
+
+# VM 上 run_quant.sh 的终端输出 (nohup / tee), 不入库
+quant_*.log
