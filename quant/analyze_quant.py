@@ -102,6 +102,9 @@ def main():
     # ── 4. 归因结论 (自动判读, 供人工复核) ──
     print("\n## 4. 瓶颈判读\n")
     bref = 8 if 8 in batches else batches[len(batches) // 2]
+    if img("fp16", bref, "compute") is None:
+        print("- 没有 fp16 基线 (VARIANTS 未含 fp16), 跳过加速比判读。")
+        return
     for v in variants:
         if v == "fp16":
             continue
