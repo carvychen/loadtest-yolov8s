@@ -2,7 +2,7 @@
   1. 量化覆盖率: 卷积有多少真的跑在 FP8/INT8 上, 多少退回 FP16?
   2. 额外开销: reformat (精度/布局转换) 与未融合 Q/DQ 吃掉了多少时间?
 
-用法: python layer_report.py results/quant/<label>-<variant>   (自动读 -layers.json / -profile.json)
+用法 (仓库根目录下): python quant/layer_report.py results/quant/<label>-<variant>   (自动读 -layers.json / -profile.json)
 """
 import json
 import re

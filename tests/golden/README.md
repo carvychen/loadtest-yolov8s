@@ -9,3 +9,5 @@
 | legacy-run_quant/ | 同一组变体下 run_quant.sh 发出的全部 docker 命令 (`<PWD>` = 工作目录) 和生成的 config.pbtxt |
 
 旧脚本需要 bash ≥ 4.4 (空数组 + `set -u`), macOS 自带的 bash 3.2 跑不了。
+
+录制于目录重组之前 (脚本与生成物都在根目录)。比对时由 `tests/legacy.py` 把路径换成现在的布局 (`quant/`、`serving/`、`artifacts/`)，其余逐字不变。

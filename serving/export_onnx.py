@@ -1,4 +1,4 @@
-"""yolov8s.pt -> yolov8s.onnx (动态 batch, 三卡通用)。一次性, 由 setup.sh 调用。
+"""yolov8s.pt -> yolov8s.onnx (动态 batch, 三卡通用)。一次性, 由 setup.sh 在 artifacts/ 下调用。
 
 精度不在此固定为 FP16——交给 TensorRT 在各卡构建引擎时用 --fp16 处理,
 这样 ONNX 保持通用, 三张卡各自编译出针对本硬件优化的 FP16 引擎。

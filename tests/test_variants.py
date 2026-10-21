@@ -17,10 +17,10 @@ def modelopt_cmd(name, **kw):
 
 def test_plain_fp8_quantizes_with_max_calibration():
     v = Variant.parse("fp8")
-    assert v.onnx_path(10) == v.onnx_path(11) == "yolov8s.fp8.onnx"
+    assert v.onnx_path(10) == v.onnx_path(11) == "artifacts/yolov8s.fp8.onnx"
     assert modelopt_cmd("fp8") == (
-        "--onnx_path=yolov8s.onnx --quantize_mode=fp8 --calibration_data_path=datasets/calib_500.npy "
-        "--calibration_method=max --calibration_eps cpu --output_path=yolov8s.fp8.onnx")
+        "--onnx_path=artifacts/yolov8s.onnx --quantize_mode=fp8 --calibration_data_path=datasets/calib_500.npy "
+        "--calibration_method=max --calibration_eps cpu --output_path=artifacts/yolov8s.fp8.onnx")
     assert v.triton_name == "yolov8s_fp8"
 
 
@@ -31,20 +31,20 @@ def test_int8_uses_entropy_and_method_can_be_overridden():
 
 def test_quant_tags_change_onnx_and_modelopt_args():
     assert modelopt_cmd("fp8-nohead").endswith(
-        "--output_path=yolov8s.fp8-nohead.onnx --nodes_to_exclude /model\\.22/.*")
+        "--output_path=artifacts/yolov8s.fp8-nohead.onnx --nodes_to_exclude /model\\.22/.*")
     assert modelopt_cmd("fp8-conv").endswith(
-        "--output_path=yolov8s.fp8-conv.onnx --op_types_to_quantize Conv")
+        "--output_path=artifacts/yolov8s.fp8-conv.onnx --op_types_to_quantize Conv")
 
 
 @pytest.mark.parametrize("name, trt_major, onnx, flags", [
     # TRT 10: fp16 = 原 FP32 ONNX + --fp16 (弱类型); 量化变体 = Q/DQ ONNX + --stronglyTyped
-    ("fp16", 10, "yolov8s.onnx", ["--fp16"]),
-    ("fp8", 10, "yolov8s.fp8.onnx", ["--stronglyTyped"]),
-    ("fp8-opt5", 10, "yolov8s.fp8.onnx", ["--stronglyTyped", "--builderOptimizationLevel=5"]),
+    ("fp16", 10, "artifacts/yolov8s.onnx", ["--fp16"]),
+    ("fp8", 10, "artifacts/yolov8s.fp8.onnx", ["--stronglyTyped"]),
+    ("fp8-opt5", 10, "artifacts/yolov8s.fp8.onnx", ["--stronglyTyped", "--builderOptimizationLevel=5"]),
     # TRT 11: 弱类型已移除, 强类型为默认; fp16 改用 AutoCast FP16 ONNX
-    ("fp16", 11, "yolov8s.fp16.onnx", []),
-    ("int8", 11, "yolov8s.int8.onnx", []),
-    ("fp8-opt5", 11, "yolov8s.fp8.onnx", ["--builderOptimizationLevel=5"]),
+    ("fp16", 11, "artifacts/yolov8s.fp16.onnx", []),
+    ("int8", 11, "artifacts/yolov8s.int8.onnx", []),
+    ("fp8-opt5", 11, "artifacts/yolov8s.fp8.onnx", ["--builderOptimizationLevel=5"]),
 ])
 def test_engine_build_depends_on_trt_major(name, trt_major, onnx, flags):
     v = Variant.parse(name)
@@ -61,7 +61,7 @@ def test_fp16_is_not_quantized():
 def test_build_tag_shares_onnx_but_keeps_its_own_triton_model():
     v = Variant.parse("fp8-opt5")
     assert v.modelopt_args(CALIB) == Variant.parse("fp8").modelopt_args(CALIB)
-    assert v.model_dir == "model_repository_q/yolov8s_fp8-opt5"
+    assert v.model_dir == "artifacts/model_repository_q/yolov8s_fp8-opt5"
 
 
 @pytest.mark.parametrize("name, hint", [
@@ -76,7 +76,7 @@ def test_invalid_names_are_rejected(name, hint):
 
 
 def test_tag_order_does_not_matter_for_onnx():
-    assert Variant.parse("fp8-conv-nohead").onnx_path(11) == "yolov8s.fp8-nohead-conv.onnx"
+    assert Variant.parse("fp8-conv-nohead").onnx_path(11) == "artifacts/yolov8s.fp8-nohead-conv.onnx"
     assert Variant.parse("fp8-conv-nohead").triton_name == "yolov8s_fp8-conv-nohead"
 
 
@@ -85,7 +85,7 @@ def test_fp16_with_build_tag_is_allowed():
 
 
 def run_check(*names):
-    return subprocess.run([sys.executable, "variants.py", "check", *names], cwd=REPO, capture_output=True, text=True)
+    return subprocess.run([sys.executable, "quant/variants.py", "check", *names], cwd=REPO, capture_output=True, text=True)
 
 
 def test_check_command_fails_fast_on_a_typo():

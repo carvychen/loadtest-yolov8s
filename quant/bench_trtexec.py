@@ -7,7 +7,7 @@
 再往外一层 (gRPC / 预处理 / 动态批处理) 由 Triton + perf_analyzer 测, 见 run_quant.sh。
 各变体的 ONNX 与精度参数见 variants.Variant; 一律 --profilingVerbosity=detailed (不影响性能, 逐层报告需要它)。
 
-用法: python3 bench_trtexec.py <gpu-label> <变体...>   (环境变量 BATCHES / PROFILE_BATCH / DURATION 可调)
+用法 (仓库根目录下): python3 quant/bench_trtexec.py <gpu-label> <变体...>   (环境变量 BATCHES / PROFILE_BATCH / DURATION 可调)
 产物 (results/quant/): <label>-trtexec.csv, <label>-env.txt, 每个变体 / batch / 层的 .log, -profile.json, -layers.json
 """
 import argparse

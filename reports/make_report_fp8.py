@@ -1,6 +1,8 @@
 """生成二期 FP8 量化分析报告 (report_fp8.docx)。数据来源: results/quant/ (rtx6000-quarter-nc24[-trt11]-*)。
-运行: python make_report_fp8.py
+运行: python reports/make_report_fp8.py
 """
+from pathlib import Path
+
 from report_style import MUTED, bullet, make_table, new_doc, para
 
 doc = new_doc(
@@ -150,5 +152,6 @@ bullet(doc, "吞吐以 trtexec 整体计时为准;逐层 profile 仅用于耗时
 bullet(doc, "mAP 采用固定 640×640 letterbox,绝对值略低于 Ultralytics 官方(rect 批推理),各精度同口径可比。", size=9.5)
 bullet(doc, "端到端吞吐受压测工具计时粒度限制,不作为结论;端到端部分仅采用逐请求延迟分解。", size=9.5)
 
-doc.save("report_fp8.docx")
-print("已生成 report_fp8.docx")
+out = Path(__file__).with_name("report_fp8.docx")
+doc.save(out)
+print(f"已生成 {out}")

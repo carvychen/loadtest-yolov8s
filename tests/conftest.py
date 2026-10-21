@@ -1,5 +1,5 @@
 import sys
 from pathlib import Path
 
-# 被测脚本都在仓库根目录 (容器里以 /work 为当前目录直接运行), 测试从任意目录跑都能 import
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# 二期脚本在 quant/ 下 (容器里以仓库根目录为当前目录运行 python quant/xxx.py, 同目录互相 import)
+sys.path.insert(0, str(Path(__file__).parent.parent / "quant"))

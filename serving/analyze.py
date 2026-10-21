@@ -1,7 +1,7 @@
 """汇总三卡 perf_analyzer 结果 -> QPS@SLA 与每美元性能 (QPS/$)。
 
 用法:
-    python analyze.py --sla-ms 50
+    python serving/analyze.py --sla-ms 50
 读取 results/*.csv (文件名即 gpu 标签), 输出对比表 + results/curve.png。
 """
 import argparse

@@ -1,8 +1,8 @@
 """精度变体: 变体名 -> 量化参数 / ONNX 文件 / 引擎构建参数 / Triton 模型名。二期各脚本只从这里取, 不自己解析变体名。"""
 from dataclasses import dataclass
 
-SOURCE_ONNX = "yolov8s.onnx"
-FP16_ONNX = "yolov8s.fp16.onnx"     # AutoCast 生成, TRT 11 的 FP16 基线
+SOURCE_ONNX = "artifacts/yolov8s.onnx"
+FP16_ONNX = "artifacts/yolov8s.fp16.onnx"     # AutoCast 生成, TRT 11 的 FP16 基线
 # FP8 用 max (E4M3 动态范围大, NVIDIA 推荐); INT8 用 entropy (TensorRT 经典 CNN 口径)
 CALIBRATION = {"fp8": "max", "int8": "entropy"}
 # 量化标签: 改变 Q/DQ ONNX。字典顺序 = ONNX 文件名里的标签顺序
@@ -51,7 +51,7 @@ class Variant:
 
     @property
     def model_dir(self):
-        return f"model_repository_q/{self.triton_name}"
+        return f"artifacts/model_repository_q/{self.triton_name}"
 
     def onnx_path(self, trt_major=None):
         """构建引擎用的 ONNX。fp16 不量化: TRT 10 用原 FP32 ONNX + --fp16; TRT 11 已移除弱类型 (--fp16 等不存在),
@@ -60,7 +60,7 @@ class Variant:
             if trt_major is None:
                 raise ValueError("fp16 的 ONNX 取决于 TRT 主版本")
             return SOURCE_ONNX if trt_major < 11 else FP16_ONNX
-        return f"yolov8s.{self.quant_name}.onnx"
+        return f"artifacts/yolov8s.{self.quant_name}.onnx"
 
     def modelopt_args(self, calibration_data, calibration_method=None):
         """`python -m modelopt.onnx.quantization` 的完整参数; fp16 不量化, 返回 None。"""
@@ -96,8 +96,8 @@ def parse_all(names):
 
 if __name__ == "__main__":
     import sys
-    # 用法: python variants.py check <变体...>   (run_quant.sh 开跑前先校验, 拼错几秒内就报错)
+    # 用法: python quant/variants.py check <变体...>   (run_quant.sh 开跑前先校验, 拼错几秒内就报错)
     if sys.argv[1:2] != ["check"]:
-        sys.exit("用法: python variants.py check <变体...>")
+        sys.exit("用法: python quant/variants.py check <变体...>")
     parse_all(sys.argv[2:])
     print("变体 OK: " + " ".join(sys.argv[2:]))

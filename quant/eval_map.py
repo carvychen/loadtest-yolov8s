@@ -5,7 +5,7 @@ conf=0.001, iou=0.7, multi-label NMS, max_det=300; 唯一差异是固定 640x640
 (Ultralytics val 用 rect 批), 所以绝对 mAP 会比官方 44.9 略低, 但各精度同口径, 相对差值可比。
 
 用法 (yolo-quant 容器内, --net host):
-    python eval_map.py --model yolov8s_fp8 --out results/quant/<label>-fp8-map.json
+    python quant/eval_map.py --model yolov8s_fp8 --out results/quant/<label>-fp8-map.json
 """
 import argparse
 import json

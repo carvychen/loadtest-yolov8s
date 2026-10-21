@@ -11,12 +11,14 @@ echo "[setup 1/3] 拉取 Triton 镜像 (server + sdk), tag=${TAG} ..."
 docker pull "$SERVER"
 docker pull "$SDK"
 
-echo "[setup 2/3] 导出 yolov8s.onnx (ultralytics CPU 镜像, 首次自动下载权重)..."
-if [ -f yolov8s.onnx ]; then
-  echo "  已存在 yolov8s.onnx, 跳过"
+echo "[setup 2/3] 导出 artifacts/yolov8s.onnx (ultralytics CPU 镜像, 首次自动下载权重)..."
+mkdir -p artifacts
+if [ -f artifacts/yolov8s.onnx ]; then
+  echo "  已存在 artifacts/yolov8s.onnx, 跳过"
 else
   docker pull "$ULTRA"
-  docker run --rm -v "$PWD":/work -w /work "$ULTRA" python export_onnx.py
+  # 在 artifacts/ 下运行: 权重 yolov8s.pt 与导出的 ONNX 都落在 artifacts/
+  docker run --rm -v "$PWD":/work -w /work/artifacts "$ULTRA" python ../serving/export_onnx.py
 fi
 
 if [ "${1:-}" = "--coco128" ]; then

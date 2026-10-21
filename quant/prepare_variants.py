@@ -1,9 +1,9 @@
 """在量化容器内运行: 为每个精度变体准备 ONNX 与 Triton 模型目录。由 run_quant.sh 调用。
-  1. FP16 基线 ONNX: ModelOpt AutoCast -> yolov8s.fp16.onnx (TensorRT 11 用; TRT 10 直接用原 FP32 ONNX + --fp16)
-  2. 量化: ModelOpt ONNX PTQ -> yolov8s.<quant_name>.onnx (Q/DQ ONNX 与 GPU 无关, 已存在则跳过)
-  3. Triton 配置: model_repository_q/yolov8s_<变体>/config.pbtxt
+  1. FP16 基线 ONNX: ModelOpt AutoCast -> artifacts/yolov8s.fp16.onnx (TensorRT 11 用; TRT 10 直接用原 FP32 ONNX + --fp16)
+  2. 量化: ModelOpt ONNX PTQ -> artifacts/yolov8s.<quant_name>.onnx (Q/DQ ONNX 与 GPU 无关, 已存在则跳过)
+  3. Triton 配置: artifacts/model_repository_q/yolov8s_<变体>/config.pbtxt
 各变体的量化参数 / ONNX 文件见 variants.Variant。
-用法: python prepare_variants.py <变体...>   (环境变量 FP8_CALIB / INT8_CALIB 可覆盖校准方法)
+用法 (仓库根目录下): python quant/prepare_variants.py <变体...>   (环境变量 FP8_CALIB / INT8_CALIB 可覆盖校准方法)
 """
 import os
 import re

@@ -11,7 +11,7 @@ cleanup() { docker rm -f triton-lt >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
 echo "[1/4] 构建本卡 TensorRT 引擎 (FP16)..."
-docker run --gpus all --rm -v "$PWD":/work -w /work "$SERVER" bash build_engine.sh
+docker run --gpus all --rm -v "$PWD":/work -w /work "$SERVER" bash serving/build_engine.sh
 
 echo "[2/4] 启动 Triton..."
 cleanup
@@ -31,8 +31,8 @@ echo "[3/4] perf_analyzer 并发扫描 (1→32)..."
 # 必须能从外部压低 REQUESTS/WARMUP, 否则容器内用默认 2500/1000 会 OOM。
 docker run --rm --net host -v "$PWD":/work -w /work \
   -e CONCURRENCY -e REQUESTS -e WARMUP \
-  "$SDK" bash run_sweep.sh "$LABEL"
+  "$SDK" bash serving/run_sweep.sh "$LABEL"
 
 echo "[4/4] 停止 Triton"
 cleanup
-echo "完成 → results/${LABEL}.csv  (收齐三份后跑: python analyze.py)"
+echo "完成 → results/${LABEL}.csv  (收齐三份后跑: python serving/analyze.py)"

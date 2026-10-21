@@ -5,6 +5,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from legacy import to_new_layout
+
 REPO = Path(__file__).parent.parent
 GOLDEN = Path(__file__).parent / "golden/legacy-run_quant/docker_calls.txt"
 VARIANTS = "fp16 fp8 int8 fp8-nohead fp8-conv fp8-opt5"
@@ -14,13 +16,13 @@ QRUN = "run --rm -v <PWD>:/work -w /work"
 def expected_calls():
     replaced = ("python -c ", "modelopt.onnx", "make_q_repo.py", "bench_trtexec.sh")
     out = []
-    for line in GOLDEN.read_text().splitlines():
+    for line in to_new_layout(GOLDEN.read_text()).splitlines():
         if line.startswith("image inspect"):
-            out += [line, f"{QRUN} yolo-quant:modelopt-0.47.0 python variants.py check {VARIANTS}"]
+            out += [line, f"{QRUN} yolo-quant:modelopt-0.47.0 python quant/variants.py check {VARIANTS}"]
         elif "bench_trtexec.sh" in line:
-            out += [f"{QRUN} -e FP8_CALIB -e INT8_CALIB yolo-quant:modelopt-0.47.0 python prepare_variants.py {VARIANTS}",
+            out += [f"{QRUN} -e FP8_CALIB -e INT8_CALIB yolo-quant:modelopt-0.47.0 python quant/prepare_variants.py {VARIANTS}",
                     "run --gpus all --rm -v <PWD>:/work -w /work -e BATCHES -e PROFILE_BATCH -e DURATION "
-                    f"nvcr.io/nvidia/tritonserver:25.08-py3 python3 bench_trtexec.py lbl {VARIANTS}"]
+                    f"nvcr.io/nvidia/tritonserver:25.08-py3 python3 quant/bench_trtexec.py lbl {VARIANTS}"]
         elif not any(r in line for r in replaced):
             out.append(line)
     return out
@@ -28,7 +30,8 @@ def expected_calls():
 
 def test_docker_orchestration_matches_legacy(tmp_path):
     shutil.copy(REPO / "run_quant.sh", tmp_path)
-    (tmp_path / "yolov8s.onnx").touch()
+    (tmp_path / "artifacts").mkdir()
+    (tmp_path / "artifacts/yolov8s.onnx").touch()
     calls = tmp_path / "docker_calls.txt"
     env = dict(os.environ, PATH=f"{REPO / 'tests/fake_host_bin'}{os.pathsep}{os.environ['PATH']}",
                FAKE_DOCKER_CALLS=str(calls), VARIANTS=VARIANTS, PWD=str(tmp_path))
@@ -47,7 +50,8 @@ def test_push_results_commits_only_this_labels_results(tmp_path):
     shutil.copy(REPO / "run_quant.sh", work)
     shutil.copy(REPO / ".gitignore", work)
     git("add", "-A"); git("commit", "-qm", "init"); git("push", "-q", "origin", "HEAD")
-    (work / "yolov8s.onnx").touch()
+    (work / "artifacts").mkdir()
+    (work / "artifacts/yolov8s.onnx").touch()
     out = work / "results/quant"
     out.mkdir(parents=True)
     for f in ("lbl-trtexec.csv", "lbl-fp8-map.json", "lbl-fp8-b8-compute.log", "other-trtexec.csv"):

@@ -2,7 +2,7 @@
 
 二期 FP8 量化实验的领域术语。代码里的名字与这里一致。
 
-**变体 (Variant)**：一次实验对象 = 一种精度 + 若干标签，写成 `<精度>[-标签...]`，如 `fp8-nohead-opt5`。每个变体对应一个 Triton 模型 `yolov8s_<变体>` 和一组结果文件 `<label>-<变体>-*`。规则全部在 `variants.py`。
+**变体 (Variant)**：一次实验对象 = 一种精度 + 若干标签，写成 `<精度>[-标签...]`，如 `fp8-nohead-opt5`。每个变体对应一个 Triton 模型 `yolov8s_<变体>` 和一组结果文件 `<label>-<变体>-*`。规则全部在 `quant/variants.py`。
 _Avoid_：模型（与 Triton 模型、YOLO 模型混淆）、配置。
 
 **精度 (Precision)**：变体的低精度类型，`fp16` / `fp8` / `int8`。`fp16` 是基线，不量化；`fp8`、`int8` 走 ModelOpt PTQ。

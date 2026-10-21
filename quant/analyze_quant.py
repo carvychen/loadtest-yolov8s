@@ -1,6 +1,6 @@
 """汇总量化实验: 精度 (mAP) × 三层吞吐 (GPU 纯计算 / 含 PCIe 传输 / Triton 端到端 @SLA) × 逐层归因。
 
-用法: python analyze_quant.py --label rtx6000-quarter-nc24 [--sla-ms 50]
+用法 (仓库根目录下): python quant/analyze_quant.py --label rtx6000-quarter-nc24 [--sla-ms 50]
 读取 results/quant/<label>-*, 输出 Markdown 到 stdout (run_quant.sh 会 tee 到 <label>-summary.md)。
 
 核心读法: 同一变体的三层加速比逐层下降, 下降发生在哪一层, 瓶颈就在哪一层。
@@ -11,9 +11,12 @@ import argparse
 import glob
 import json
 import os
+import sys
+from pathlib import Path
 
 import pandas as pd
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "serving"))   # 复用一期 analyze.py 的 QPS@SLA 计算
 from analyze import load as load_sweep, summarize as summarize_sweep
 from layer_report import summarize as summarize_layers
 

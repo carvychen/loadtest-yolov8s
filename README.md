@@ -12,7 +12,23 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 ```
 
 三台机器各自 `run.sh` 用不同标签：`rtx6000-quarter-nc24` / `t4` / `a10`。
-收齐三份 CSV 后，本机跑 `python analyze.py --sla-ms 50` 出对比报告。
+收齐三份 CSV 后，本机跑 `python serving/analyze.py --sla-ms 50` 出对比报告。
+
+## 目录结构
+
+所有命令都在仓库根目录下运行；根目录只放三个入口脚本。
+
+```
+setup.sh · run.sh · run_quant.sh   入口: 环境准备 / 一期选型压测 / 二期量化实验
+serving/        一期 · Triton FP16 选型压测: export_onnx.py, build_engine.sh, run_sweep.sh, analyze.py
+quant/          二期 · FP8/INT8 量化 (见下方二期一节的文件表) + 量化镜像 Dockerfile
+reports/        Word 报告: report.docx (一期) / report_fp8.docx (二期) 及生成脚本
+model_repository/  一期 Triton 模型配置 (config.pbtxt 入库, 引擎不入库)
+results/        实验数据 (入库): 一期 <label>.csv, 二期 quant/<label>-*
+tests/          本地测试 (无需 GPU / Docker)
+artifacts/      运行时生成, 不入库: yolov8s.pt, *.onnx, 构建日志, 二期 Triton 模型目录 model_repository_q/
+datasets/       运行时下载, 不入库: COCO val2017, 校准集
+```
 
 ## 目标设备
 
@@ -30,7 +46,7 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 > **两行同一块 GPU 切片**：`rtx6000-quarter-nc24` 与 `-nc36` 是同一块 RTX PRO 6000 1/4 切片（`nvidia-smi` 确认为真 MIG 实例：MIG 已启用 / GI·CI / ~46 SM / 24 GB），只差主机 vCPU·内存·单价。实测只跑 NC24 一次；**GPU 吞吐与主机无关**，NC36 用同一份吞吐按 $1.243 折算 QPS/$（vCPU 更多不会降低 GPU-bound 吞吐，估值偏保守）。MIG 模式下 `nvidia-smi` 顶层 `GPU-Util` 显示 `N/A` 属正常，不代表空闲。
 > RTX 1/4 切片单价（NC24 **$1.13** / NC36 $1.243/hr）与整块 T4（$1.276/hr）同一量级，是 QPS/$ 最可能拉开差距处；NC24 更便宜，QPS/$ 最优。
 > `NV36ads_A10_v5` 是整块 A10 的大 VM（36 vCPU/440GB），$4.16/hr 偏贵；如需公平可用小切片档 `NV6/12/18ads_A10_v5`。
-> 有 EA/预留折扣价时，改 `analyze.py` 顶部的 `PRICES_PER_HOUR` 即可。
+> 有 EA/预留折扣价时，改 `serving/analyze.py` 顶部的 `PRICES_PER_HOUR` 即可。
 
 ## 压测数据
 
@@ -46,7 +62,7 @@ bash run.sh <gpu-label>       # 一条命令: 建引擎 → 起 Triton → 并�
 ## 方法论要点
 
 - 三卡同权重 / 同 640×640 / 同 **FP16** / 同 Triton 动态批处理配置。
-- **TRT 引擎硬件绑定**：不可跨卡复用，每卡各自 `build_engine.sh` 构建。
+- **TRT 引擎硬件绑定**：不可跨卡复用，每卡各自 `serving/build_engine.sh` 构建。
 - **在同一 Triton 容器内构建引擎并 serving**，避免 TRT 版本不匹配。
 - 默认测模型前向（不烘焙 NMS）——对选型/成本，加速器前向吞吐才是三卡核心差异，NMS 近似 GPU 无关。
 
@@ -92,19 +108,20 @@ SKIP_SWEEP=1 bash run_quant.sh rtx6000-quarter-nc24      # 只要 mAP + trtexec,
 | 三层测速 | ① GPU 纯计算（`--noDataTransfers` + CUDA Graph）② 含 PCIe 传输 ③ Triton + perf_analyzer QPS@SLA | 加速比在哪一层掉下来，瓶颈就在哪一层 |
 | 逐层归因 | `trtexec --dumpProfile --exportLayerInfo` | 低精度卷积占比（量化覆盖率）、reformat / 未融合 Q/DQ 的时间占比 |
 
-数据集与中间产物（`datasets/`、`*.npy`、`*.onnx`、`*.plan`、日志）不入库；`results/quant/` 下的 CSV / JSON / summary.md 入库。
+数据集与中间产物（`datasets/`、`artifacts/`、逐测点日志）不入库；`results/quant/` 下的 CSV / JSON / summary.md 入库。
 变体名 = `<精度>[-标签]`：`nohead`（检测头不量化）、`conv`（只量化 Conv）改量化方案；`opt5`（`--builderOptimizationLevel=5`）只改构建参数。
 脚本自动识别 TensorRT 10 / 11：TRT 11 已移除弱类型（没有 `--fp16`），FP16 基线改用 ModelOpt AutoCast 生成的 FP16 ONNX。换 TRT 版本时请换 label，避免覆盖结果，例如 `TRITON_TAG=26.09 bash run_quant.sh rtx6000-quarter-nc24-trt11`。
 可调：`VARIANTS`、`BATCHES`（默认 `1 8 32`）、`PROFILE_BATCH`（8）、`DURATION`（每测点秒数，15）、`FP8_CALIB` / `INT8_CALIB`、`TRITON_TAG`（换更新的 TensorRT 版本对比 FP8 kernel 覆盖）、`PUSH_RESULTS=1`（跑完自动提交并推送本 label 的结果，VM 需有仓库写权限，如 deploy key）。
 
 | 文件 | 在哪跑 | 做什么 |
 |---|---|---|
-| `run_quant.sh` | VM 主机 | 只做容器编排：按步骤调下面的脚本，起 Triton，跑 mAP / perf_analyzer |
+| `run_quant.sh` | VM 主机 | 只做容器编排：按步骤调下面 `quant/` 里的脚本，起 Triton，跑 mAP / perf_analyzer |
 | `variants.py` | 被其余脚本 import | 变体名的全部规则：量化参数、ONNX 文件、TRT 10 / 11 构建参数、Triton 模型名；拼错直接报错 |
 | `trtexec.py` | 被 `bench_trtexec.py` import | TRT 版本 → 测速 / profile 参数；trtexec 日志 → 吞吐与 GPU 计算时间 |
 | `prepare_variants.py` | 量化容器（CPU） | AutoCast FP16 ONNX、ModelOpt 量化、Triton `config.pbtxt` |
 | `bench_trtexec.py` | Triton server 容器（GPU） | 构建引擎 → 两层测速 → 逐层 profile → `<label>-trtexec.csv` |
 | `eval_map.py` / `layer_report.py` / `analyze_quant.py` | 量化容器 | mAP、逐层归因、汇总 `summary.md` |
+| `fetch_coco.py` / `prep_calib.py` / `quant_common.py` | 量化容器 | COCO 下载、校准集、共用的预处理与数据集划分 |
 
 本地测试（无需 GPU / Docker）：`python3 -m pytest tests`。假 `trtexec` / `docker` 回放真实日志，并与重构前脚本录下的 golden 逐字比对（见 `tests/golden/README.md`）。术语见 `GLOSSARY.md`。
 
@@ -117,4 +134,4 @@ az vm deallocate -g <rg> -n <vm>
 ## 可调参数（环境变量）
 
 - `TRITON_TAG`（默认 `25.08`）：选一个 TensorRT 支持你最新 GPU 的 tag（Blackwell 需 2025+）。
-- 分辨率 / batch 范围 / 并发范围 / SLA：见 `build_engine.sh`、`run_sweep.sh`、`analyze.py` 顶部。
+- 分辨率 / batch 范围 / 并发范围 / SLA：见 `serving/build_engine.sh`、`serving/run_sweep.sh`、`serving/analyze.py` 顶部。

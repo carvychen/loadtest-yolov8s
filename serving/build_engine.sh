@@ -3,7 +3,7 @@
 # 引擎硬件绑定, 不可跨卡复用。
 set -euo pipefail
 
-ONNX="${ONNX:-yolov8s.onnx}"
+ONNX="${ONNX:-artifacts/yolov8s.onnx}"
 OUT="model_repository/yolov8s/1/model.plan"
 
 if [ ! -f "$ONNX" ]; then
@@ -28,6 +28,6 @@ echo "使用 trtexec: $TRTEXEC"
   --optShapes=images:8x3x640x640 \
   --maxShapes=images:32x3x640x640 \
   --memPoolSize=workspace:4096 \
-  | tee "build_$(hostname).log"
+  | tee "artifacts/build_$(hostname).log"
 
 echo "engine -> $OUT"

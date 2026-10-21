@@ -1,7 +1,9 @@
 """生成 Word 版评测结论报告 (report.docx)。风格: 专业、精炼、清晰。
 图表位置留 placeholder, 由人工把 results/curve.png 贴入。
-运行: python make_report.py
+运行: python reports/make_report.py
 """
+from pathlib import Path
+
 from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
@@ -112,5 +114,6 @@ bullet(doc, "价格为 Azure 公开零售价(Consumption / 按需 / Linux / 非 
 bullet(doc, "本报告纳入四款实测机型(RTX NC24、NC4as_T4_v3〔客户现用〕、NC16as_T4_v3、A10)与一款保守折算(RTX NC36,沿用 NC24 实测吞吐、仅换更高单价);同为 T4 的 NC8as_T4_v3 未测。", size=9.5)
 bullet(doc, "测试针对模型前向吞吐(不烘焙 NMS),对加速器选型与成本这是核心差异项;显存对本模型/batch 三卡均不构成瓶颈。", size=9.5)
 
-doc.save("report.docx")
-print("已生成 report.docx")
+out = Path(__file__).with_name("report.docx")
+doc.save(out)
+print(f"已生成 {out}")
