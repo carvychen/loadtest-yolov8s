@@ -1,0 +1,28 @@
+image inspect yolo-quant:modelopt-0.47.0
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python fetch_coco.py
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python prep_calib.py datasets/calib_500.npy
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -c 'import numpy as np; a=np.load('"'"'datasets/calib_500.npy'"'"', mmap_mode='"'"'r'"'"'); np.savez('"'"'datasets/autocast_calib.npz'"'"', images=np.ascontiguousarray(a[:16]))'
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -m modelopt.onnx.autocast --onnx_path=yolov8s.onnx --output_path=yolov8s.fp16.onnx --low_precision_type=fp16 --keep_io_types --calibration_data=datasets/autocast_calib.npz
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -m modelopt.onnx.quantization --onnx_path=yolov8s.onnx --quantize_mode=fp8 --calibration_data_path=datasets/calib_500.npy --calibration_method=max --calibration_eps cpu --output_path=yolov8s.fp8.onnx
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -m modelopt.onnx.quantization --onnx_path=yolov8s.onnx --quantize_mode=int8 --calibration_data_path=datasets/calib_500.npy --calibration_method=entropy --calibration_eps cpu --output_path=yolov8s.int8.onnx
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -m modelopt.onnx.quantization --onnx_path=yolov8s.onnx --quantize_mode=fp8 --calibration_data_path=datasets/calib_500.npy --calibration_method=max --calibration_eps cpu --output_path=yolov8s.fp8-nohead.onnx --nodes_to_exclude '/model\.22/.*'
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python -m modelopt.onnx.quantization --onnx_path=yolov8s.onnx --quantize_mode=fp8 --calibration_data_path=datasets/calib_500.npy --calibration_method=max --calibration_eps cpu --output_path=yolov8s.fp8-conv.onnx --op_types_to_quantize Conv
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python make_q_repo.py fp16 fp8 int8 fp8-nohead fp8-conv fp8-opt5
+run --gpus all --rm -v <PWD>:/work -w /work -e VARIANTS -e BATCHES -e PROFILE_BATCH -e DURATION nvcr.io/nvidia/tritonserver:25.08-py3 bash bench_trtexec.sh lbl
+rm -f triton-q
+run --gpus all -d --rm --name triton-q --net host -v <PWD>/model_repository_q:/models nvcr.io/nvidia/tritonserver:25.08-py3 tritonserver --model-repository=/models
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_fp16 --out results/quant/lbl-fp16-map.json
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_fp8 --out results/quant/lbl-fp8-map.json
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_int8 --out results/quant/lbl-int8-map.json
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_fp8-nohead --out results/quant/lbl-fp8-nohead-map.json
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_fp8-conv --out results/quant/lbl-fp8-conv-map.json
+run --rm --net host -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python eval_map.py --model yolov8s_fp8-opt5 --out results/quant/lbl-fp8-opt5-map.json
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_fp16 -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-fp16
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_fp8 -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-fp8
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_int8 -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-int8
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_fp8-nohead -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-fp8-nohead
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_fp8-conv -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-fp8-conv
+run --rm --net host -v <PWD>:/work -w /work -e CONCURRENCY -e REQUESTS -e WARMUP -e MODEL=yolov8s_fp8-opt5 -e OUTDIR=results/quant nvcr.io/nvidia/tritonserver:25.08-py3-sdk bash run_sweep.sh lbl-fp8-opt5
+rm -f triton-q
+run --rm -v <PWD>:/work -w /work yolo-quant:modelopt-0.47.0 python analyze_quant.py --label lbl
+rm -f triton-q

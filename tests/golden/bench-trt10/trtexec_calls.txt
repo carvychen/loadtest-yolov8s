@@ -1,0 +1,38 @@
+--help
+--help
+--onnx=yolov8s.onnx --saveEngine=model_repository_q/yolov8s_fp16/1/model.plan --fp16 --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_fp16/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp16/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp16/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp16/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp16/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-fp16-profile.json --exportLayerInfo=results/quant/lbl-fp16-layers.json
+--onnx=yolov8s.fp8.onnx --saveEngine=model_repository_q/yolov8s_fp8/1/model.plan --stronglyTyped --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_fp8/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-fp8-profile.json --exportLayerInfo=results/quant/lbl-fp8-layers.json
+--onnx=yolov8s.int8.onnx --saveEngine=model_repository_q/yolov8s_int8/1/model.plan --stronglyTyped --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_int8/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_int8/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_int8/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_int8/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_int8/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-int8-profile.json --exportLayerInfo=results/quant/lbl-int8-layers.json
+--onnx=yolov8s.fp8-nohead.onnx --saveEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --stronglyTyped --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-nohead/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-fp8-nohead-profile.json --exportLayerInfo=results/quant/lbl-fp8-nohead-layers.json
+--onnx=yolov8s.fp8-conv.onnx --saveEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --stronglyTyped --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-conv/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-fp8-conv-profile.json --exportLayerInfo=results/quant/lbl-fp8-conv-layers.json
+--onnx=yolov8s.fp8.onnx --saveEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --stronglyTyped --builderOptimizationLevel=5 --minShapes=images:1x3x640x640 --optShapes=images:8x3x640x640 --maxShapes=images:32x3x640x640 --memPoolSize=workspace:4096 --profilingVerbosity=detailed
+--loadEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --shapes=images:1x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait --noDataTransfers
+--loadEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --shapes=images:8x3x640x640 --warmUp=2000 --duration=15 --useCudaGraph --useSpinWait
+--loadEngine=model_repository_q/yolov8s_fp8-opt5/1/model.plan --shapes=images:8x3x640x640 --noDataTransfers --separateProfileRun --warmUp=1000 --duration=5 --profilingVerbosity=detailed --dumpProfile --exportProfile=results/quant/lbl-fp8-opt5-profile.json --exportLayerInfo=results/quant/lbl-fp8-opt5-layers.json

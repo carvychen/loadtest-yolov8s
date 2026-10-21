@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "FAKE GPU, 595.58.03, 24576 MiB"
